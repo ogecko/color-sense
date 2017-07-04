@@ -1,0 +1,45 @@
+{
+  "name": "Gamut",
+  "version": "1.0.2",
+  "description": "The complete range of Hues, Values and Chroma.",
+  "author": "David Morrison",
+  "license": "Proprietary",
+  "private": true,
+  "scripts": {
+    "start": "meteor run -p 3002",
+    "test": "meteor test -p 3010 --driver-package=practicalmeteor:mocha",
+    "testapp": "meteor test-app -p 3030 --driver-package=practicalmeteor:mocha",
+    "ci-install": "meteor --version && meteor npm install --production",
+    "ci-unit-tests": "meteor test -p 3040 --once --driver-package dispatch:mocha-phantomjs | sed -e '/stdout:/d' -e '/39m[ ]*$/d' -e '/insert failed: Access denied. No allow validators/d'; ( exit ${PIPESTATUS[0]} )",
+    "co": "meteor test -p 3040 --once --driver-package dispatch:mocha-phantomjs ",
+    "ci-pkg-tests": "meteor test-packages -p 3020 --once --driver-package dispatch:mocha-phantomjs",
+    "ci-validate": "npm run ci-install && npm run ci-unit-tests && true"
+  },
+  "dependencies": {
+    "babel-runtime": "6.18.0",
+    "d3-color": "^1.0.2",
+    "d3-scale": "^1.0.5",
+    "d3-selection": "^1.0.4",
+    "d3-shape": "^1.0.6",
+    "d3-transition": "^1.0.4",
+    "hammer-touchemulator": "0.0.2",
+    "hammerjs": "^2.0.8",
+    "meteor-node-stubs": "~0.2.0",
+    "moment": "^2.17.1",
+    "numeral": "^2.0.4",
+    "popmotion": "^6.3.3",
+    "three": "^0.84.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^6.3.1"
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          "last 2 versions"
+        ]
+      }
+    }
+  }
+}

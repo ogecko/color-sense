@@ -1,0 +1,114 @@
+import { _ } from 'meteor/underscore';
+import { Template } from 'meteor/templating';
+import { FlowRouter } from 'meteor/kadira:flow-router';
+import { Keypress } from 'meteor/keypress:keypress';
+import THREE from 'three';
+import Hammer from  'hammerjs';
+import popmotionTHREERenderer from '/imports/3d/popmotionTHREERenderer.js';
+import ImageMesh from '/imports/3d/ImageMesh.js';
+import { huePlate, hueSpace, hueCursor, getCPos, getVPos } from '/imports/3d/huePlate.js';
+import { VHC, maxChroma, rgb_to_vhc, vhc_to_rgb, wrapFromTo, dsp3 } from '/imports/color/vhc.js';
+import { tween, physics, easing }  from 'popmotion';
+import * as d3c from "d3-color";
+import { getImageSliceDefn } from '/imports/3d/getImageSlice.js';
+import { store } from '/imports/store/index.js';
+
+Template.thumbsketch.onCreated(function() {
+	const self = this;
+	store.subscribe(self);
+	self.keyboard = new Keypress.Listener();	// ensure this is destroyed on template removal
+});
+
+Template.thumbsketch.onDestroyed(function() {
+	const self = this;
+	self.keyboard.destroy();
+});
+
+Template.thumbsketch.onRendered(function () {
+	const self = this;
+
+	const container = self.$('.js-placeholder')[0];
+	const film = self.film = popmotionTHREERenderer(container);
+
+	let img = undefined;
+	self.autorun(function() {
+		const doc = store.get('imageSliceDefn');
+		if (doc.isReady && doc.src) {
+			if (img) film.scene.remove(img);
+			img = ImageMesh(doc.src, 'thumbsketch', film);
+			film.scene.add(img);
+			film.setNameSpace({ img });
+			film.thresholdTo(50);
+		}
+	});
+
+	film.touch.on('panstart', 	ev => film.panToStartDrag(ev));
+	film.touch.on('pan', 		ev => film.panToContinueDrag(ev));
+	film.touch.on('panend', 	ev => film.panToEndWithInertia(ev));
+
+	film.touch.on('press', 		ev => console.log(ev));
+	film.touch.on('tap', 		ev => {
+		var pixelBuffer = new Uint8Array( 4 );
+
+		const gl = film.renderer.context;
+		gl.readPixels(
+			ev.srcEvent.offsetX, film.renderer.domElement.height - ev.srcEvent.offsetY,
+			1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer
+		);
+		const vhc = rgb_to_vhc(pixelBuffer[0], pixelBuffer[1], pixelBuffer[2]);
+		const rgb = d3c.rgb(pixelBuffer[0], pixelBuffer[1], pixelBuffer[2]);
+		const hcl = d3c.hcl(rgb);
+		console.log(rgb, hcl, vhc);
+		store.set('rgb', rgb);
+	});
+
+	self.keyboard.simple_combo('ctrl 1', ev => film.zoomTo(1.5));
+	self.keyboard.simple_combo('ctrl 2', ev => film.zoomTo(2));
+	self.keyboard.simple_combo('ctrl 3', ev => film.zoomTo(3));
+	self.keyboard.simple_combo('ctrl 4', ev => film.zoomTo(5));
+	self.keyboard.simple_combo('ctrl 5', ev => film.zoomTo(7));
+	self.keyboard.simple_combo('ctrl 6', ev => film.zoomTo(10));
+	self.keyboard.simple_combo('ctrl 7', ev => film.zoomTo(15));
+	self.keyboard.simple_combo('ctrl 8', ev => film.zoomTo(20));
+	self.keyboard.simple_combo('ctrl 9', ev => film.zoomTo(30));
+	self.keyboard.simple_combo('ctrl 0', ev => film.zoomTo(1));
+	self.keyboard.simple_combo('ctrl =', ev => film.zoomIn());
+	self.keyboard.simple_combo('ctrl -', ev => film.zoomOut());
+
+	self.keyboard.simple_combo('alt 1', ev => film.thresholdTo(10));
+	self.keyboard.simple_combo('alt 2', ev => film.thresholdTo(20));
+	self.keyboard.simple_combo('alt 3', ev => film.thresholdTo(30));
+	self.keyboard.simple_combo('alt 4', ev => film.thresholdTo(40));
+	self.keyboard.simple_combo('alt 5', ev => film.thresholdTo(50));
+	self.keyboard.simple_combo('alt 6', ev => film.thresholdTo(60));
+	self.keyboard.simple_combo('alt 7', ev => film.thresholdTo(70));
+	self.keyboard.simple_combo('alt 8', ev => film.thresholdTo(80));
+	self.keyboard.simple_combo('alt 9', ev => film.thresholdTo(90));
+	self.keyboard.simple_combo('alt 0', ev => film.thresholdTo(0));
+	self.keyboard.simple_combo('alt =', ev => film.thresholdUp());
+	self.keyboard.simple_combo('alt -', ev => film.thresholdDown());
+
+	self.keyboard.simple_combo('m', ev => {
+		store.set('imageSliceDefn', getImageSliceDefn(film.camera, film.namespace.img));
+	});
+
+	self.keyboard.simple_combo('x', ev => {
+		var pixelBuffer = new Uint8Array( 4*500*500 );
+
+		const gl = film.renderer.context;
+		gl.readPixels(
+			0, 0,
+			500, 500, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer
+		);
+		const vhc = rgb_to_vhc(pixelBuffer[0], pixelBuffer[1], pixelBuffer[2]);
+		console.log('grabbed pixelBuffer');
+	});
+
+});
+
+Template.thumbsketch.events({
+	'wheel': function(ev, template) {
+		(ev.originalEvent.deltaY > 0) ? template.film.zoomOut() : template.film.zoomIn();
+	},
+});
+

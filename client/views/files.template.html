@@ -1,0 +1,72 @@
+<template name="files">
+
+	<div class="ui container">
+		<h2 class="ui header">
+			<i class="file icon"></i>
+			<div class="content">
+				Images
+			</div>
+		</h2>
+		<div class="ui divided items">
+
+			{{#each upload in uploads}}
+				<div class="item">
+					<a class="ui small image js-select-file" href="/trace?file={{md5 upload}}">
+						<img src="{{link upload}}">
+					</a>
+					<div class="content">
+						<div class="right floated">
+							<div class="ui red icon button js-delete" data-key="{{id upload}}">
+								<i class="delete icon"></i>
+							</div>
+						</div>
+						<a class="header js-select-file" href="/trace?file={{md5 upload}}">{{upload.filename}}</a>
+						<div class="meta">
+							<span class="age">{{size upload}} {{progress upload}} Uploaded {{when upload}}</span>
+							{{#if progress upload}}
+							<div class="ui tiny progress" id="{{id upload}}" data-percent={{progress upload}}>
+								<div class="bar"></div>
+							</div>
+							{{/if}}
+							<span></span>
+						</div>
+						<div class="extra">
+						</div>
+					</div>
+				</div>		
+				
+			{{/each}}
+
+			<div class="item">
+				<a class="ui small image">
+					<img src="/images/defaults/image.png">
+				</a>
+				<div class="content  js-drop-file">
+					<div class="ui right floated massive button" style="border: 4px dashed grey;">
+						<i class="cloud upload icon"></i>
+						Drag and drop files here
+					</div>
+					<a class="header">Upload images to analyse</a>
+					<div class="extra">
+						<div class="ui basic button js-browse-file">
+							<i class="open folder icon"></i>
+							Select File
+						</div>
+						<div class="ui basic button">
+							<i class="camera icon"></i>
+							Take Picture
+						</div>
+						<div class="ui {{isUploadMessage}} negative message js-upload-message">
+							<i class="close icon"></i>
+							<div class="header">{{uploadMessage}}</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	</div>
+</template>
