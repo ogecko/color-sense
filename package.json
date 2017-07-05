@@ -1,9 +1,9 @@
 {
-  "name": "Gamut",
+  "name": "color-sense",
   "version": "1.0.2",
-  "description": "The complete range of Hues, Values and Chroma.",
+  "description": "Make sense of the colors in a scene, picture or image using Color Sense.",
   "author": "David Morrison",
-  "license": "Proprietary",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "meteor run -p 3002",
