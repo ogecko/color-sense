@@ -172,18 +172,23 @@ class popmotionTHREERenderer extends Renderer {
 	}
 
 	getWindowSize() {
+		const offset = $(this.container).offset();
 		const size = {
-			width: window.innerWidth - this.container.offsetLeft,
-			height: window.innerHeight - this.container.offsetTop - 4,
+			width: window.innerWidth - offset.left,
+			height: window.innerHeight - offset.top,
 		};
 		size.aspect = size.width / size.height;
 		return size;
 	}
 	onWindowResize() {
 		const size = this.getWindowSize();
-		this.set('camera.aspect', size.aspect);
+		if (this.namespace.camera) this.set('camera.aspect', size.aspect);
 		this.renderer.setSize(size.width, size.height);
 		this.renderer.setPixelRatio(window.devicePixelRatio);
+	}
+
+	removeScrollBars() {
+		$('body').css('overflow','hidden');
 	}
 
 	addTHREEObjects(obj, parent) {
