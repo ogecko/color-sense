@@ -175,17 +175,20 @@ vec4 lch_to_rgb(vec4 color) {
 	return rgb;
 }
 
-float crossHatch(vec2 pos) {
-	return mod(pos.x-pos.y, 15.0);
+// Diagonal Hatch 15 pixels apart
+// Returns a float from 0.0 to 1.1 indicating hatch level
+float hatch() {
+	return mod(gl_FragCoord.x-gl_FragCoord.y, 15.0)/15.0;	
 }
 
 void main( void ) {
 	vec4 lch = rgb_to_lch(texture2D(u_tex0, v_uv));
-	// lch.x = max(lch.x, u_threshold);							// limit value to threshold or higher
-	// lch.x = lch.x + (step(u_threshold, lch.x))*100.0;	// push darker or lighter
 	if (u_threshold > 19.0) {
 		float dx = 1000.0 / (u_threshold - 10.0);		// dx is width of grey bands 100, 50, 33, 25, etc
-		lch.x = floor((lch.x + dx / 2.0) / dx) * dx;			// quantise around each dx center mark
+		float bv = (lch.x + dx / 2.0) / dx;				// band float n.x
+		float b = floor(bv);							// band number 0,1,2,3,4,5,6,7,8,9,10
+		float c = fract(bv) * 100.0;					// how far into band 0 to 100%
+		lch.x = b * dx - step(c, 5.0)*hatch()*dx + step(95.0, c)*hatch()*dx;	// quantise the lightness
 	}
 	lch.y = 0.0;
 	gl_FragColor = lch_to_rgb(lch);
