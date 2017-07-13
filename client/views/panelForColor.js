@@ -7,7 +7,7 @@ import * as d3c from 'd3-color';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
 
-Template.color2.onCreated(function() {
+Template.panelForColor.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
 });
@@ -17,14 +17,14 @@ function tileValues(rgb) {
 	const rgb1 = d3c.rgb(rgb.r, rgb.g, rgb.b);
 	const hcl = d3c.hcl(rgb1);
 	const rgb2 = rgb1;
-	result.push({ x: 0, y: 1.5, scale: 14, hcl, rgb1, rgb2 });
-	_.range(0, 24).forEach(h => {
+	result.push({ x: 0, y: 1.5, scale: 13.5, hcl, rgb1, rgb2 });
+	_.range(0, 24, 2).forEach(h => {
 		const hue = hcl.h + (h - 5) * 360 / 24;
 		const max = maxChromaHcl(hue);
 		const hcl2 = d3c.hcl(hue, max.c, max.l);
 		const rgb1 = d3c.rgb(hcl2);
 		const rgb2 = rgb1.darker();
-		result.push({ x: h, y: 0, scale: 1, hcl2, rgb1, rgb2 });
+		result.push({ x: h / 2, y: 0, scale: 1, hcl2, rgb1, rgb2 });
 	});
 	_.range(0, 11).forEach(v => {
 		_.range(0, 100, 10).forEach(c => {
@@ -37,14 +37,15 @@ function tileValues(rgb) {
 	return result;
 }
 
-Template.color2.onRendered(function () {
+Template.panelForColor.onRendered(function () {
 	const self = this;
-	const container = self.$('.js-color2')[0];
+	const container = self.$('.js-panelForColor')[0];
+	const size = 20;
 
-	const svg = d3s.select('.js-color2')
+	const svg = d3s.select('.js-panelForColor')
 		.append('svg')
-		.attr('width', 800)
-		.attr('height', 800);
+		.attr('width', 230)
+		.attr('height', 300);
 
 	self.autorun(function() {
 		const doc = store.get('rgb');
@@ -55,14 +56,14 @@ Template.color2.onRendered(function () {
 				.append('rect')
 				.attr('rx', d => 3 / d.scale)
 				.attr('ry', d => 3 / d.scale)
-				.attr('width', 28)
-				.attr('height', 28)
+				.attr('width', size-2)
+				.attr('height', size-2)
 				.style('stroke', '#fff')
 				.style('stroke-width', '.2px')
-				.attr('transform', d => `translate(${5 * 30},${0 * 30})scale(0.01)`)
+				.attr('transform', d => `translate(${5 * size},${0 * size})scale(0.01)`)
 			.merge(tiles).transition()
-				// .attr('transform', d => `translate(${d.x * 30},${d.y * 30})`)
-				.attr('transform', d => `translate(${d.x * 30},${d.y * 30})scale(${d.scale})`)
+				// .attr('transform', d => `translate(${d.x * size},${d.y * size})`)
+				.attr('transform', d => `translate(${d.x * size},${d.y * size})scale(${d.scale})`)
 				.style('fill', d => d.rgb1);
 			tiles.exit()
 				.remove();
@@ -73,14 +74,14 @@ Template.color2.onRendered(function () {
 });
 
 
-Template.color2.helpers({
+Template.panelForColor.helpers({
 	hue: function () {
 		const doc = store.get('rgb');
 		if (doc.isReady)  return numeral(d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b)).h).format('0');
 	},
 	value: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b)).l).format('0.0');
+		if (doc.isReady)  return numeral(d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b)).l).format('0');
 	},
 	chroma: function () {
 		const doc = store.get('rgb');
@@ -94,7 +95,7 @@ Template.color2.helpers({
 });
 
 
-Template.color2.events({
+Template.panelForColor.events({
 	'click .btnLayered': function(event, template) {
 	},
 });

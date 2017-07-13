@@ -558,7 +558,7 @@ $.fn.form = function(parameters) {
                   }
                   if(isCheckbox) {
                     if(isChecked) {
-                      values[name].push(value || true);
+                      values[name].push(true);
                     }
                     else {
                       values[name].push(false);
@@ -576,7 +576,7 @@ $.fn.form = function(parameters) {
                   }
                   else if(isCheckbox) {
                     if(isChecked) {
-                      values[name] = value || true;
+                      values[name] = true;
                     }
                     else {
                       values[name] = false;

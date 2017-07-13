@@ -26,7 +26,8 @@ Template.thumbsketch.onDestroyed(function() {
 
 Template.thumbsketch.onRendered(function () {
 	const self = this;
-
+	self.$('.ui.sidebar').sidebar({ dimPage: false, closable: false, onHide: () => console.log('sidebar hidden') });
+	
 	const container = self.$('.js-placeholder')[0];
 	const film = self.film = popmotionTHREERenderer(container);
 
@@ -42,6 +43,7 @@ Template.thumbsketch.onRendered(function () {
 		}
 	});
 
+	film.removeScrollBars();
 	film.touch.on('panstart', 	ev => film.panToStartDrag(ev));
 	film.touch.on('pan', 		ev => film.panToContinueDrag(ev));
 	film.touch.on('panend', 	ev => film.panToEndWithInertia(ev));

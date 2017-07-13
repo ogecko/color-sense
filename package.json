@@ -28,8 +28,6 @@
     "moment": "^2.17.1",
     "numeral": "^2.0.4",
     "popmotion": "^6.3.3",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
     "three": "^0.84.0"
   },
   "devDependencies": {
