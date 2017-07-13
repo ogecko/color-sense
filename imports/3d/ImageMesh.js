@@ -18,7 +18,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 	// create the texture to hold the image
 	const texture = new THREE.Texture();
 	texture.minFilter = THREE.LinearFilter;
-	texture.magFilter = THREE.NearestFilter;
+	// texture.magFilter = THREE.NearestFilter;
 	texture.generateMipmaps = false;
 
 	// create the mesh
