@@ -1,70 +1,70 @@
 <template name="panelForSettings">
 	<div class="ui container segment">
-		<div class="ui form">
+		<div class="ui threshold form">
 			<h2 class="ui header">Thresholds</h2>
-		  		<div class="ui two fields">
-					<div class="field ui toggle checkbox">
-						<input type="checkbox" name="showColors" checked tabindex="3" class="hidden">
-						<label>Show Colors</label>
-					</div>
-					<div class="field ui toggle checkbox">
-						<input type="checkbox" name="showSoftEdges" tabindex="2" class="hidden">
-						<label>Show Soft Edges</label>
-					</div>
-		  			
-		  		</div>
-		  		<div class="field">
-					<label>Number of Tone Levels</label>
-					<select class="ui dropdown" name="numEdges" tabindex="0">
-	        			<option value="0" selected>All</option>
-	        			<option value="10">2</option>
-	    				<option value="20">3</option>
-	    				<option value="30">4</option>
-	    				<option value="40">5</option>
-	    				<option value="50">6</option>
-	    				<option value="60">7</option>
-	    				<option value="70">8</option>
-	    				<option value="80">9</option>
-	    				<option value="90">10</option>
-	    			</select>
-		  		</div>
-		  		<div class="field">
-					<label>Mask Darkest Levels</label>
-					<select class="ui dropdown" name="maskLevel" tabindex="1">
-	        			<option value="0" selected>None</option>
-	        			<option value="10">1</option>
-	    				<option value="20">2</option>
-	    				<option value="30">3</option>
-	    				<option value="40">4</option>
-	    				<option value="50">5</option>
-	    				<option value="60">6</option>
-	    				<option value="70">7</option>
-	    				<option value="80">8</option>
-	    				<option value="90">9</option>
-	    			</select>
-		  		</div>
-			<h2 class="ui header">View Settings</h2>
-		  	<div class="">
+	  		<div class="ui two fields">
 				<div class="field ui toggle checkbox">
-					<input type="checkbox" name="lockView" tabindex="5" class="hidden">
-					<label>Lock View</label>
+					<input type="checkbox" name="showColors" checked tabindex="3" class="hidden">
+					<label>Show Colors</label>
 				</div>
-		  		<div class="field">
-					<label>Reset Zoom Level</label>
-					<select class="ui dropdown" name="zoomLevel" tabindex="4">
-	        			<option value="1" selected>x 1</option>
-	    				<option value="1.5">x 1.5</option>
-	    				<option value="2">x 2</option>
-	    				<option value="3">x 3</option>
-	    				<option value="5">x 5</option>
-	    				<option value="7">x 7</option>
-	    				<option value="10">x 10</option>
-	    				<option value="15">x 15</option>
-	    				<option value="20">x 20</option>
-	    			</select>
-		  		</div>
-		  	</div>
+				<div class="field ui toggle checkbox">
+					<input type="checkbox" name="showSoftEdges" tabindex="2" class="hidden">
+					<label>Show Soft Edges</label>
+				</div>
+	  		</div>
+	  		<div class="field">
+				<label>Number of Tone Levels</label>
+				<select class="ui dropdown" name="numEdges" tabindex="0">
+        			<option value="0" selected>All</option>
+    				<option value="90">10</option>
+    				<option value="80">9</option>
+    				<option value="70">8</option>
+    				<option value="60">7</option>
+    				<option value="50">6</option>
+    				<option value="40">5</option>
+    				<option value="30">4</option>
+    				<option value="20">3</option>
+        			<option value="10">2</option>
+    			</select>
+	  		</div>
+	  		<div class="field">
+				<label>Mask Darkest Levels</label>
+				<select class="ui dropdown" name="maskLevel" tabindex="1">
+        			<option value="0" selected>None</option>
+        			<option value="10">1</option>
+    				<option value="20">2</option>
+    				<option value="30">3</option>
+    				<option value="40">4</option>
+    				<option value="50">5</option>
+    				<option value="60">6</option>
+    				<option value="70">7</option>
+    				<option value="80">8</option>
+    				<option value="90">9</option>
+    			</select>
+	  		</div>
 		</div>
+	</div>
+
+	<div class="ui container segment">
+		<div class="ui view form">
+			<h2 class="ui header">View Settings</h2>
+			<div class="field ui toggle checkbox">
+				<input type="checkbox" name="lockView" tabindex="5" class="hidden">
+				<label>Lock View</label>
+			</div>
+	  		<div class="field">
+				<label>Reset Zoom Level</label>
+				<select class="ui dropdown" name="zoomLevel" tabindex="4">
+        			<option value="1" selected>x 1</option>
+    				<option value="1.5">x 1.5</option>
+    				<option value="2">x 2</option>
+    				<option value="3">x 3</option>
+    				<option value="5">x 5</option>
+    				<option value="7">x 7</option>
+    				<option value="10">x 10</option>
+    			</select>
+	  		</div>
+		  </div>
 	</div>
 </template>
 

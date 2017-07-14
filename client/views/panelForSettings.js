@@ -8,28 +8,35 @@ Template.panelForSettings.onCreated(function() {
 	store.subscribe(self);
 });
 
-Template.panelForSettings.onRendered(function () {
-	const self = this;
-
+function onFormChangesSetStore(self, formSelector, storeId) {
 	// NOTE to have a Form "get values" and "set values" working compitibly
 	// need FIX to lines 561 and 579 semantic-ui/definitions/behaviours/form.js
 	// to get values[name].push(true) rather then 'on'.
 
-	// Initialise Semantic UI checkboxes and dropdowns
-	self.$('.ui.checkbox').checkbox({
-		onChange: () => store.set('settings', self.$('.ui.form').form('get values')),
-	});
-	self.$('.ui.dropdown').dropdown({
-		onChange: () => store.set('settings', self.$('.ui.form').form('get values')),
-	});
-
-	// load data for the form whenever it changes in the store
+	// Initialise form with any values from the store (and when they change)
 	self.autorun(() => {
-		const doc = store.get('settings');
+		const doc = store.get(storeId);
 		if (doc && doc.isReady) {
-			self.$('.ui.form').form('set values', _.omit(doc, ['_id', 'isReady']));
+			self.$(formSelector).form('set values', _.omit(doc, ['_id', 'isReady']));
 		}
 	});
+
+	// Update the store whenever any field is changed
+	self.$(`${formSelector} .ui.checkbox`).checkbox({
+		onChange: () => store.set(storeId, self.$(formSelector).form('get values')),
+	});
+	self.$(`${formSelector} .ui.dropdown`).dropdown({
+		onChange: () => store.set(storeId, self.$(formSelector).form('get values')),
+	});
+
+}
+
+Template.panelForSettings.onRendered(function () {
+	const self = this;
+
+	// Link each form to the store
+	onFormChangesSetStore(self, '.ui.threshold.form', 'thresholdSettings');
+	onFormChangesSetStore(self, '.ui.view.form', 'viewSettings');
 });
 
 

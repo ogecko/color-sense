@@ -1,4 +1,7 @@
 uniform float u_threshold;
+uniform float u_maskLevel;
+uniform float u_showColors;
+uniform float u_showEdges;
 uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
 varying vec2 v_uv;
@@ -185,12 +188,12 @@ void main( void ) {
 	vec4 lch = rgb_to_lch(texture2D(u_tex0, v_uv));
 	if (u_threshold > 9.0) {					// u_threshold 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
 		float dx = 1000.0 / (u_threshold);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
-		float lx = max(lch.x, dx * 1.0);		// clamp out anything below edge n eg 0 = all, 1 = no blacks, 2=no blacks or darks
+		float lx = max(lch.x, dx * u_maskLevel / 10.0);		// clamp out anything below edge n eg 0 = all, 10 = no blacks, 20=no blacks or darks
 		float bv = (lx + dx / 2.0) / dx;		// calculate where lightness falls into the bands
 		float b = floor(bv);					// band number 0,1,2,..n where n=#edges eg 2 edges n = 0:black,1:midtone,2:white
 		float c = fract(bv) * 100.0;			// how far into band 0 to 100%
-		lch.x = b * dx - step(c, 5.0)*hatch()*dx + step(95.0, c)*hatch()*dx;	// quantise the lightness
+		lch.x = b * dx - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// quantise the lightness
 	}
-	lch.y = 0.0;
+	lch.y = lch.y * u_showColors / 100.0;
 	gl_FragColor = lch_to_rgb(lch);
 }

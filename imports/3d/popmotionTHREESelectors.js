@@ -15,6 +15,9 @@ export const setSelectors = {
   u_tween: (element, value) => element.material.uniforms.u_tween.value = value,
   u_time: (element, value) => element.material.uniforms.u_time.value = value,
   u_threshold: (element, value) => element.material.uniforms.u_threshold.value = value,
+  u_maskLevel: (element, value) => element.material.uniforms.u_maskLevel.value = value,
+  u_showColors: (element, value) => element.material.uniforms.u_showColors.value = value,
+  u_showEdges: (element, value) => element.material.uniforms.u_showEdges.value = value,
   u_resolution: (element, value) => element.material.uniforms.u_resolution.value = value,
   u_mouse: (element, value) => element.material.uniforms.u_mouse.value = value,
   u_flag01: (element, value) => element.material.uniforms.u_flag01.value = value,
@@ -46,6 +49,9 @@ export const getSelectors = {
   lookAt: element => element.getWorldDirection(),
   aspect: element => element.aspect,
   u_threshold: element => element.material.uniforms.u_threshold.value,
+  u_maskLevel: element => element.material.uniforms.u_maskLevel.value,
+  u_showColors: element => element.material.uniforms.u_showColors.value,
+  u_showEdges: element => element.material.uniforms.u_showEdges.value,
   render: element => element.render,
 };
 

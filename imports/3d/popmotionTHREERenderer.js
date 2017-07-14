@@ -146,6 +146,13 @@ class popmotionTHREERenderer extends Renderer {
 			.start();
 	}
 
+	uniformTo(uname, endValue) {
+		const startValue = this.get(uname);
+		tween({ from: startValue, to: endValue })
+			.output(v => this.set(uname, v))
+			.start();
+	}
+
 
 	thresholdTo(endThreshold) {
 		const startThreshold = this.get('img.u_threshold');

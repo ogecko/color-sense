@@ -26,12 +26,17 @@ Template.thumbsketch.onDestroyed(function() {
 
 Template.thumbsketch.onRendered(function () {
 	const self = this;
-	self.$('.ui.sidebar').sidebar({ dimPage: false, closable: false, onHide: () => console.log('sidebar hidden') });
-	
+	let noLockView = true;
+	let img = undefined;
+
+	self.$('.ui.sidebar').sidebar({
+		dimPage: false,
+		closable: false,
+	});
+
 	const container = self.$('.js-placeholder')[0];
 	const film = self.film = popmotionTHREERenderer(container);
 
-	let img = undefined;
 	self.autorun(function() {
 		const doc = store.get('imageSliceDefn');
 		if (doc.isReady && doc.src) {
@@ -43,10 +48,31 @@ Template.thumbsketch.onRendered(function () {
 		}
 	});
 
+	self.autorun(function() {
+		const doc = store.get('thresholdSettings');
+		if (doc.isReady) {
+			console.log('updating', doc);
+			film.uniformTo('img.u_threshold', doc.numEdges);
+			film.uniformTo('img.u_maskLevel', doc.maskLevel);
+			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
+			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
+			film.uniformTo('img.u_maskLevel', doc.maskLevel);
+		}
+	});
+
+	self.autorun(function() {
+		const doc = store.get('viewSettings');
+		if (doc.isReady) {
+			console.log('updating', doc);
+			film.zoomTo(doc.zoomLevel);
+			noLockView = !doc.lockView;
+		}
+	});
+
 	film.removeScrollBars();
-	film.touch.on('panstart', 	ev => film.panToStartDrag(ev));
-	film.touch.on('pan', 		ev => film.panToContinueDrag(ev));
-	film.touch.on('panend', 	ev => film.panToEndWithInertia(ev));
+	film.touch.on('panstart', 	ev => noLockView && film.panToStartDrag(ev));
+	film.touch.on('pan', 		ev => noLockView && film.panToContinueDrag(ev));
+	film.touch.on('panend', 	ev => noLockView && film.panToEndWithInertia(ev));
 
 	film.touch.on('press', 		ev => console.log(ev));
 	film.touch.on('tap', 		ev => {
