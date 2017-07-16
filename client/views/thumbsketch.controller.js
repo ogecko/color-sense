@@ -57,6 +57,7 @@ Template.thumbsketch.onRendered(function () {
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
 			film.uniformTo('img.u_maskLevel', doc.maskLevel);
+			film.uniformTo('img.u_maskLight', doc.maskLight);
 		}
 	});
 
