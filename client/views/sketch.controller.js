@@ -57,10 +57,9 @@ Template.sketch.onRendered(function () {
 		if (doc.isReady) {
 			console.log('updating', doc);
 			film.uniformTo('img.u_threshold', doc.numEdges);
-			film.uniformTo('img.u_maskLevel', doc.maskLevel);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
-			film.uniformTo('img.u_maskLevel', doc.maskLevel);
+			film.uniformTo('img.u_maskDark', doc.maskDark);
 			film.uniformTo('img.u_maskLight', doc.maskLight);
 		}
 	});
