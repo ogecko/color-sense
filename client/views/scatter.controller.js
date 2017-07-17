@@ -32,6 +32,12 @@ const zScale = d3.scaleLinear().domain([0, 100]).range([0, 10]);
 
 Template.scatter.onRendered(function () {
 	const self = this;
+
+	self.$('.ui.sidebar').sidebar({
+		dimPage: false,
+		closable: false,
+	});
+	
 	const container = self.$('.js-placeholder')[0];
 	const film = self.film = popmotionTHREERenderer(container, { useOrbitControls: true });
 
