@@ -1,4 +1,4 @@
-uniform float u_threshold;
+uniform float u_numEdges;
 uniform float u_maskDark;
 uniform float u_maskLight;
 uniform float u_showColors;
@@ -187,8 +187,8 @@ float hatch() {
 
 void main( void ) {
 	vec4 lch = rgb_to_lch(texture2D(u_tex0, v_uv));
-	if (u_threshold > 9.0) {					// u_threshold 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
-		float dx = 1000.0 / (u_threshold);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
+	if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
+		float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
 		float lx = max(lch.x, dx * u_maskDark / 10.0);		// clamp out anything below edge n eg 0 = all, 10 = no blacks, 20=no blacks or darks
 		float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out anything below edge n eg 0 = all, 10 = no blacks, 20=no blacks or darks
 		float bv = (ly + dx / 2.0) / dx;		// calculate where lightness falls into the bands

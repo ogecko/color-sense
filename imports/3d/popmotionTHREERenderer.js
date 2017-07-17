@@ -155,26 +155,26 @@ class popmotionTHREERenderer extends Renderer {
 
 
 	thresholdTo(endThreshold) {
-		const startThreshold = this.get('img.u_threshold');
+		const startThreshold = this.get('img.u_numEdges');
 		store.set('threshold', { value: endThreshold });
 		tween({ from: startThreshold, to: endThreshold })
-			.output(v => this.set('img.u_threshold', v))
+			.output(v => this.set('img.u_numEdges', v))
 			.start();
 	}
 
 	thresholdUp() {
-		const startThreshold = this.get('img.u_threshold');
+		const startThreshold = this.get('img.u_numEdges');
 		store.set('threshold', { value: startThreshold + 1 });
 		tween({ from: startThreshold, to: startThreshold + 1 })
-			.output(v => this.set('img.u_threshold', v))
+			.output(v => this.set('img.u_numEdges', v))
 			.start();
 	}
 
 	thresholdDown() {
-		const startThreshold = this.get('img.u_threshold');
+		const startThreshold = this.get('img.u_numEdges');
 		store.set('threshold', { value: startThreshold - 1 });
 		tween({ from: startThreshold, to: startThreshold - 1 })
-			.output(v => this.set('img.u_threshold', v))
+			.output(v => this.set('img.u_numEdges', v))
 			.start();
 	}
 
