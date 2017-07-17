@@ -2,61 +2,35 @@
 	<div class="ui container segment">
 		<div class="ui threshold form">
 			<h2 class="ui header">Thresholds</h2>
-	  		<div class="ui two fields">
-				<div class="field ui toggle checkbox">
-					<input type="checkbox" name="showColors" checked tabindex="3" class="hidden">
-					<label>Show Colors</label>
-				</div>
-				<div class="field ui toggle checkbox">
-					<input type="checkbox" name="showSoftEdges" tabindex="2" class="hidden">
-					<label>Show Soft Edges</label>
-				</div>
-	  		</div>
-	  		<div class="field">
-				<label>Number of Tone Levels</label>
-				<select class="ui dropdown" name="numEdges" tabindex="0">
-        			<option value="0" selected>All</option>
-    				<option value="90">10</option>
-    				<option value="80">9</option>
-    				<option value="70">8</option>
-    				<option value="60">7</option>
-    				<option value="50">6</option>
-    				<option value="40">5</option>
-    				<option value="30">4</option>
-    				<option value="20">3</option>
-        			<option value="10">2</option>
-    			</select>
-	  		</div>
-	  		<div class="field">
-				<label>Mask Darkest Levels</label>
-				<select class="ui dropdown" name="maskLevel" tabindex="1">
-        			<option value="0" selected>None</option>
-        			<option value="10">1</option>
-    				<option value="20">2</option>
-    				<option value="30">3</option>
-    				<option value="40">4</option>
-    				<option value="50">5</option>
-    				<option value="60">6</option>
-    				<option value="70">7</option>
-    				<option value="80">8</option>
-    				<option value="90">9</option>
-    			</select>
-	  		</div>
-	  		<div class="field">
-				<label>Mask Lightest Levels</label>
-				<select class="ui dropdown" name="maskLight" tabindex="2">
-        			<option value="0" selected>None</option>
-        			<option value="10">1</option>
-    				<option value="20">2</option>
-    				<option value="30">3</option>
-    				<option value="40">4</option>
-    				<option value="50">5</option>
-    				<option value="60">6</option>
-    				<option value="70">7</option>
-    				<option value="80">8</option>
-    				<option value="90">9</option>
-    			</select>
-	  		</div>
+            <div class="field">
+                <label>Number of Tones</label>
+                <div class="ui fluid icon buttons">
+                    <div class="ui button js-onLevelDec"><i class="chevron left icon"></i></div>
+                    <div class="ui button js-onLevelMid">{{numLevels}} Levels</div>
+                    <div class="ui button js-onLevelInc"><i class="chevron right icon"></i></div>
+                </div>
+            </div>
+            <div class="field">
+                {{#if isLevels}}
+                <label>Mask Tones</label>
+                <div class="ui fluid mini icon buttons">
+                    {{#each level in levels}}
+                    <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+            <div class="ui two fields">
+                <div class="field ui toggle checkbox js-showColors">
+                    <input type="checkbox" name="showColors" {{isShowColors}} tabindex="3" class="hidden">
+                    <label>Show Colors</label>
+                </div>
+                <div class="field ui toggle checkbox js-showSoftEdges">
+                    <input type="checkbox" name="showSoftEdges" {{isShowSoftEdges}} tabindex="2" class="hidden">
+                    <label>Show Soft Edges</label>
+                </div>
+            </div>
+
 		</div>
 	</div>
 
