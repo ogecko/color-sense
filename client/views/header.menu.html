@@ -9,45 +9,36 @@
 		<a class="header item" href="/page/files">
 			<i class="folder open icon"></i>
 		</a>
-		<a class="header item" href="/trace?image=paints1">
+		<a class="header item" href="/sketch?image=paints1">
 			<i class="file icon"></i>
 		</a>
-		<a class="header item" href="/thumbsketch">
-			<i class="write icon"></i>
-		</a>
-		<a class="header item" href="/page/paint">
-			<i class="paint brush icon"></i>
-		</a>
-		<a class="header item" href="/page/color2">
-			<i class="tint icon"></i>
-		</a>
 		<a class="header item" href="/scatter/all">
-			<i class="yelp icon"></i>
+			<i class="eyedropper icon"></i>
 		</a>
 		<a class="header item" href="/scatter/hue">
-			<i class="yelp icon"></i>
+			<i class="paint brush icon"></i>
 		</a>
-		<div class="ui dropdown item">
-			<i class="folder open icon"></i>
-			<div class="icon inverted blue menu">
-				<div class="item"> <i class="arrow circle up icon"></i></div>
-				<div class="item"> <i class="arrow circle down icon"></i></div>
-			</div>
-		</div>
-
 		<a class="header item" href="/surface">
-			<i class="yelp icon"></i>
+			<i class="align center icon"></i>
 		</a>
 		<a class="header item" href="/page/space">
 			<i class="spinner icon"></i>
 		</a>
-		<a class="header item" href="/scatter2">
-			<i class="computer icon"></i>
-		</a>
-<!-- 					<div class="right menu">
-			<div class="item">
+		<div class="ui dropdown item">
+			<i class="zoom open icon"></i>
+			<div class="icon inverted blue menu">
+				<div class="item js-zoom" data-zoomlevel="0.5">x 0.5</div>
+				<div class="item js-zoom" data-zoomlevel="1">x 1</div>
+				<div class="item js-zoom" data-zoomlevel="1.5">x 1.5</div>
+				<div class="item js-zoom" data-zoomlevel="2">x 2</div>
+				<div class="item js-zoom" data-zoomlevel="3">x 3</div>
+				<div class="item js-zoom" data-zoomlevel="5">x 5</div>
+				<div class="item js-zoom" data-zoomlevel="7">x 7</div>
+				<div class="item js-zoom" data-zoomlevel="10">x 10</div>
 			</div>
 		</div>
--->
-		</div>
+		<a class="header js-lock item" href="">
+			<i class="{{ isLocked }} icon"></i>
+		</a>
+	</div>
 </template>

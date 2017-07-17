@@ -21,6 +21,12 @@ export const store = {
 		store._collection.findOne({ _id: id })
 	),
 
+	mutate: (id, mutateFn) => {
+		let settings = store.get(id);
+		settings = mutateFn(settings);
+		store.set(id, settings);
+	},
+
 	// private properties
 	_collection: new Mongo.Collection('store'),
 	_publication: (Meteor.isServer) && Meteor.publish('store', () => store._collection.find({})),

@@ -27,27 +27,22 @@ Template.panelForSettings.helpers({
 	isShowSoftEdges: () => store.get('thresholdSettings').showSoftEdges ? 'checked' : undefined,
 });
 
-function settingsMutate(mutateFn) {
-		let settings = store.get('thresholdSettings');
-		settings = mutateFn(settings);
-		store.set('thresholdSettings', settings);
-}
 
 Template.panelForSettings.events({
-	'click .js-onLevelDec': () => settingsMutate(s => {
+	'click .js-onLevelDec': () => store.mutate('thresholdSettings', s => {
 		s.numEdges = (90 + s.numEdges - 10) % 90;
 		return s;
 	}),
-	'click .js-onLevelInc': () => settingsMutate(s => {
+	'click .js-onLevelInc': () => store.mutate('thresholdSettings', s => {
 		s.numEdges = (90 + s.numEdges + 10) % 90;
 		return s;
 	}),
-	'click .js-onLevelMid': () => settingsMutate(s => {
+	'click .js-onLevelMid': () => store.mutate('thresholdSettings', s => {
 		if (s.maskLight === 0 && s.maskLevel === 0) s.numEdges = 0;
 		s.maskLight = 0; s.maskLevel = 0;
 		return s;
 	}),
-	'click .js-onMask': (ev) => settingsMutate(s => {
+	'click .js-onMask': (ev) => store.mutate('thresholdSettings', s => {
 		const lvl = ev.currentTarget.dataset.level*10;
 		const darkDelta = lvl - s.maskLevel;
 		const lightDelta = +s.numEdges+20 - s.maskLight - lvl;
@@ -62,7 +57,7 @@ Template.panelForSettings.events({
 		}
 		return s;
 	}),
-	'click .js-showColors': () => settingsMutate(s => { s.showColors = !s.showColors; return s; }),
-	'click .js-showSoftEdges': () => settingsMutate(s => { s.showSoftEdges = !s.showSoftEdges; return s; }),
+	'click .js-showColors': () => store.mutate('thresholdSettings', s => { s.showColors = !s.showColors; return s; }),
+	'click .js-showSoftEdges': () => store.mutate('thresholdSettings', s => { s.showSoftEdges = !s.showSoftEdges; return s; }),
 });
 

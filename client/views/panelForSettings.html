@@ -12,12 +12,12 @@
             </div>
             <div class="field">
                 {{#if isLevels}}
-                <label>Mask Tones</label>
-                <div class="ui fluid mini icon buttons">
-                    {{#each level in levels}}
-                    <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
-                    {{/each}}
-                </div>
+                    <label>Mask Tones</label>
+                    <div class="ui fluid mini icon buttons">
+                        {{#each level in levels}}
+                            <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
+                        {{/each}}
+                    </div>
                 {{/if}}
             </div>
             <div class="ui two fields">
@@ -32,28 +32,6 @@
             </div>
 
 		</div>
-	</div>
-
-	<div class="ui container segment">
-		<div class="ui view form">
-			<h2 class="ui header">View Settings</h2>
-			<div class="field ui toggle checkbox">
-				<input type="checkbox" name="lockView" tabindex="5" class="hidden">
-				<label>Lock View</label>
-			</div>
-	  		<div class="field">
-				<label>Reset Zoom Level</label>
-				<select class="ui dropdown" name="zoomLevel" tabindex="4">
-        			<option value="1" selected>x 1</option>
-    				<option value="1.5">x 1.5</option>
-    				<option value="2">x 2</option>
-    				<option value="3">x 3</option>
-    				<option value="5">x 5</option>
-    				<option value="7">x 7</option>
-    				<option value="10">x 10</option>
-    			</select>
-	  		</div>
-		  </div>
 	</div>
 </template>
 

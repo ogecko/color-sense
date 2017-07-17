@@ -1,8 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Template } from 'meteor/templating';
-// Accounts.ui.config({
-//     dropdownClasses: 'right'
-// });
+import { store } from '/imports/store/index.js';
+
+Template.header.onCreated(function() {
+	const self = this;
+	store.subscribe(self);
+});
 
 
 Template.header.onRendered(function () {
@@ -11,6 +14,7 @@ Template.header.onRendered(function () {
 });
 
 Template.header.helpers({
+	isLocked: () => store.get('viewSettings').lockView ? 'lock' : 'unlock',
 	userId() {
 		return Meteor.userId;
 	},
@@ -18,4 +22,12 @@ Template.header.helpers({
 
 Template.header.events({
 	'click .js-sidebar': ev => 	$('.ui.sidebar').sidebar('toggle'),
+	'click .js-lock': () => store.mutate('viewSettings', s => {
+		s.lockView = !s.lockView;
+		return s;
+	}),
+	'click .js-zoom': (ev) => store.mutate('viewSettings', s => {
+		s.zoomLevel = +ev.currentTarget.dataset.zoomlevel;
+		return s;
+	}),
 });

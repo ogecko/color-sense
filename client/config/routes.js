@@ -10,7 +10,7 @@ function appRenderContent(template) {
 
 FlowRouter.route('/', 					{ action: () => appRenderContent('home') });
 FlowRouter.route('/trace',				{ action: () => appRenderContent('trace') });
-FlowRouter.route('/thumbsketch',		{ action: () => appRenderContent('thumbsketch') });
+FlowRouter.route('/sketch',				{ action: () => appRenderContent('sketch') });
 FlowRouter.route('/scatter/:type',		{ action: () => appRenderContent('scatter') });
 FlowRouter.route('/surface',			{ action: () => appRenderContent('surface') });
 FlowRouter.route('/page/:pageTitle', 	{ action: () => {

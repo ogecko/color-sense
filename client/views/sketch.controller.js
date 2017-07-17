@@ -13,18 +13,18 @@ import * as d3c from "d3-color";
 import { getImageSliceDefn } from '/imports/3d/getImageSlice.js';
 import { store } from '/imports/store/index.js';
 
-Template.thumbsketch.onCreated(function() {
+Template.sketch.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
 	self.keyboard = new Keypress.Listener();	// ensure this is destroyed on template removal
 });
 
-Template.thumbsketch.onDestroyed(function() {
+Template.sketch.onDestroyed(function() {
 	const self = this;
 	self.keyboard.destroy();
 });
 
-Template.thumbsketch.onRendered(function () {
+Template.sketch.onRendered(function () {
 	const self = this;
 	let noLockView = true;
 	let img = undefined;
@@ -38,10 +38,14 @@ Template.thumbsketch.onRendered(function () {
 	const film = self.film = popmotionTHREERenderer(container);
 
 	self.autorun(function() {
-		const doc = store.get('imageSliceDefn');
-		if (doc.isReady && doc.src) {
+		const imageName = FlowRouter.getQueryParam('image');
+		const fileName = FlowRouter.getQueryParam('file');
+		let path = undefined;
+		if (imageName) path = `/images/${imageName}.jpg`;
+		if (fileName) path = `/gridfs/uploads/md5/${fileName}`;
+		if (path) {
 			if (img) film.scene.remove(img);
-			img = ImageMesh(doc.src, 'thumbsketch', film);
+			img = ImageMesh(path, 'sketch', film);
 			film.scene.add(img);
 			film.setNameSpace({ img });
 			film.thresholdTo(50);
@@ -135,7 +139,8 @@ Template.thumbsketch.onRendered(function () {
 
 });
 
-Template.thumbsketch.events({
+Template.sketch.events({
+	'click js-lock': () => console.log('lock'),
 	'wheel': function(ev, template) {
 		(ev.originalEvent.deltaY > 0) ? template.film.zoomOut() : template.film.zoomIn();
 	},

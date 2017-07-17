@@ -11,7 +11,7 @@
 
 			{{#each upload in uploads}}
 				<div class="item">
-					<a class="ui small image js-select-file" href="/trace?file={{md5 upload}}">
+					<a class="ui small image js-select-file" href="/sketch?file={{md5 upload}}">
 						<img src="{{link upload}}">
 					</a>
 					<div class="content">
@@ -20,7 +20,7 @@
 								<i class="delete icon"></i>
 							</div>
 						</div>
-						<a class="header js-select-file" href="/trace?file={{md5 upload}}">{{upload.filename}}</a>
+						<a class="header js-select-file" href="/sketch?file={{md5 upload}}">{{upload.filename}}</a>
 						<div class="meta">
 							<span class="age">{{size upload}} {{progress upload}} Uploaded {{when upload}}</span>
 							{{#if progress upload}}
