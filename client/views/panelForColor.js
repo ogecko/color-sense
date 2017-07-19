@@ -47,6 +47,21 @@ Template.panelForColor.onRendered(function () {
 		.attr('width', 230)
 		.attr('height', 300);
 
+	const gradient = svg.append("defs")
+		.append("linearGradient")
+		.attr("id", "gradient")
+		.attr("x1", "0%").attr("y1", "0%")
+		.attr("x2", "0%").attr("y2", "100%")
+		.attr("spreadMethod", "pad");
+
+	gradient.append("stop")
+		.attr("offset", "0%")
+		.attr("stop-color", "#F0F0F0");
+
+	gradient.append("stop")
+		.attr("offset", "100%")
+		.attr("stop-color", "#303030");
+
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc)  {
@@ -58,13 +73,13 @@ Template.panelForColor.onRendered(function () {
 				.attr('ry', d => 3 / d.scale)
 				.attr('width', size-2)
 				.attr('height', size-2)
-				.style('stroke', '#fff')
+				// .style('stroke', '#fff')
 				.style('stroke-width', '.2px')
 				.attr('transform', d => `translate(${5 * size},${0 * size})scale(0.01)`)
 			.merge(tiles).transition()
 				// .attr('transform', d => `translate(${d.x * size},${d.y * size})`)
 				.attr('transform', d => `translate(${d.x * size},${d.y * size})scale(${d.scale})`)
-				.style('fill', d => d.rgb1);
+				.style('fill', d => ((d.scale>5) ? 'url(#gradient)' : d.rgb1));
 			tiles.exit()
 				.remove();
 
