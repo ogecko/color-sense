@@ -20,16 +20,22 @@
                     </div>
                 {{/if}}
             </div>
-            <div class="ui two fields">
+<!--             <div class="ui fields">
+ -->
                 <div class="field ui toggle checkbox js-showColors">
-                    <input type="checkbox" name="showColors" {{isShowColors}} tabindex="3" class="hidden">
+                    <input type="checkbox" name="showColors" {{isShowColors}} tabindex="1" class="hidden">
                     <label>Show Colors</label>
                 </div>
                 <div class="field ui toggle checkbox js-showSoftEdges">
                     <input type="checkbox" name="showSoftEdges" {{isShowSoftEdges}} tabindex="2" class="hidden">
                     <label>Show Soft Edges</label>
                 </div>
-            </div>
+                <div class="field ui toggle checkbox js-maxContrast">
+                    <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
+                    <label>Max Contrast</label>
+                </div>
+            
+            <!-- </div> -->
 
 		</div>
 	</div>

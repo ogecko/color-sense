@@ -3,6 +3,7 @@ uniform float u_maskDark;
 uniform float u_maskLight;
 uniform float u_showColors;
 uniform float u_showEdges;
+uniform float u_maxContrast;
 uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
 varying vec2 v_uv;
@@ -189,14 +190,18 @@ void main( void ) {
 	vec4 lch = rgb_to_lch(texture2D(u_tex0, v_uv));
 	if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
 		float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
-		float lx = max(lch.x, dx * u_maskDark / 10.0);		// clamp out anything below edge n eg 0 = all, 10 = no blacks, 20=no blacks or darks
-		float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out anything below edge n eg 0 = all, 10 = no blacks, 20=no blacks or darks
+		float lx = max(lch.x, dx * u_maskDark / 10.0);				// clamp out n dark bands eg 0 = show all, 10 = no blacks, 20=no blacks or darks
+		float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out n light bands eg 0 = show all, 10 = no whites, 20=no whites or lights
 		float bv = (ly + dx / 2.0) / dx;		// calculate where lightness falls into the bands
 		float b = floor(bv);					// band number 0,1,2,..n where n=#edges eg 2 edges n = 0:black,1:midtone,2:white
 		float c = fract(bv) * 100.0;			// how far into band 0 to 100%
-		lch.x = b * dx - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// quantise the lightness
-		// lch.x = (lch.x - u_maskDark*dx/10.0)*20.0;
+		lch.x = b * dx;																				// quantise the lightness
+		lch.x = lch.x - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// optionally add shoft edges
+		float lowest = 0.0 + u_maskDark/10.0*dx*u_maxContrast/100.0;
+		float highest = 100.0 - u_maskLight/10.0*dx*u_maxContrast/100.0;
+		lch.x = (lch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
 	}
+	lch.y = lch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
 	lch.y = lch.y * u_showColors / 100.0;
 	gl_FragColor = lch_to_rgb(lch);
 }

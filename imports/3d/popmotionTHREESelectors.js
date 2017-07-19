@@ -19,6 +19,7 @@ export const setSelectors = {
   u_maskLight: (element, value) => element.material.uniforms.u_maskLight.value = value,
   u_showColors: (element, value) => element.material.uniforms.u_showColors.value = value,
   u_showEdges: (element, value) => element.material.uniforms.u_showEdges.value = value,
+  u_maxContrast: (element, value) => element.material.uniforms.u_maxContrast.value = value,
   u_resolution: (element, value) => element.material.uniforms.u_resolution.value = value,
   u_mouse: (element, value) => element.material.uniforms.u_mouse.value = value,
   u_flag01: (element, value) => element.material.uniforms.u_flag01.value = value,
@@ -54,6 +55,7 @@ export const getSelectors = {
   u_maskLight: element => element.material.uniforms.u_maskLight.value,
   u_showColors: element => element.material.uniforms.u_showColors.value,
   u_showEdges: element => element.material.uniforms.u_showEdges.value,
+  u_maxContrast: element => element.material.uniforms.u_maxContrast.value,
   render: element => element.render,
 };
 

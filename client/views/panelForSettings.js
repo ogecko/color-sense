@@ -25,6 +25,7 @@ Template.panelForSettings.helpers({
 	},
 	isShowColors: () => store.get('thresholdSettings').showColors ? 'checked' : undefined,
 	isShowSoftEdges: () => store.get('thresholdSettings').showSoftEdges ? 'checked' : undefined,
+	isMaxContrast: () => store.get('thresholdSettings').maxContrast ? 'checked' : undefined,
 });
 
 
@@ -59,5 +60,6 @@ Template.panelForSettings.events({
 	}),
 	'click .js-showColors': () => store.mutate('thresholdSettings', s => { s.showColors = !s.showColors; return s; }),
 	'click .js-showSoftEdges': () => store.mutate('thresholdSettings', s => { s.showSoftEdges = !s.showSoftEdges; return s; }),
+	'click .js-maxContrast': () => store.mutate('thresholdSettings', s => { s.maxContrast = !s.maxContrast; return s; }),
 });
 

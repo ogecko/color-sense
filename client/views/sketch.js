@@ -59,6 +59,7 @@ Template.sketch.onRendered(function () {
 			film.uniformTo('img.u_numEdges', doc.numEdges);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
+			film.uniformTo('img.u_maxContrast', doc.maxContrast ? 100 : 0);
 			film.uniformTo('img.u_maskDark', doc.maskDark);
 			film.uniformTo('img.u_maskLight', doc.maskLight);
 		}
