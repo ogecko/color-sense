@@ -7,6 +7,12 @@ import * as d3c from 'd3-color';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
 
+d3s.selection.prototype.moveToFront = function() {  
+      return this.each(function(){
+        this.parentNode.appendChild(this);
+      });
+    };
+
 Template.panelForColor.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
@@ -47,8 +53,8 @@ Template.panelForColor.onRendered(function () {
 		.attr('width', 230)
 		.attr('height', 240);
 
-	const gradient = svg.append("defs")
-		.append("linearGradient")
+	const defs = svg.append("defs");
+	const gradient = defs.append("linearGradient")
 		.attr("id", "gradient")
 		.attr("x1", "0%").attr("y1", "0%")
 		.attr("x2", "0%").attr("y2", "100%")
@@ -62,6 +68,28 @@ Template.panelForColor.onRendered(function () {
 		.attr("offset", "100%")
 		.attr("stop-color", "#303030");
 
+
+	// const filter = defs.append("filter")
+	// 	.attr("id", "shadowFilter")
+	// 	.attr("x", "0").attr("y", "0")
+	// 	.attr("width", "200%").attr("height", "200%")
+
+	// filter.append("feOffset")
+	// 	.attr("result", "offOut")
+	// 	.attr("in", "SourceAlpha")
+	// 	.attr("dx", "5")
+	// 	.attr("dy", "5");
+
+	// filter.append("feGaussianBlur")
+	// 	.attr("result", "blurOut")
+	// 	.attr("in", "offOut")
+	// 	.attr("stdDeviation", "5");
+
+	// filter.append("feBlend")
+	// 	.attr("in", "SourceGraphic")
+	// 	.attr("in2", "blurOut")
+	// 	.attr("mode", "normal");
+
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc.isReady)  {
@@ -72,7 +100,8 @@ Template.panelForColor.onRendered(function () {
 
 			d3s.selectAll('.js-colortitle').style('background-color', c0);
 			d3s.selectAll('.js-colortitle .ui.header').style('color', c1);
-			// d3s.selectAll('.js-colorstats').style('background-color', c2);
+
+
 
 			const tiles = svg.selectAll('.huetile')
 				.data(tileValues(doc));
@@ -84,7 +113,7 @@ Template.panelForColor.onRendered(function () {
 				.attr('width', size-2)
 				.attr('height', size-2)
 				// .style('stroke', '#fff')
-				.style('stroke-width', '.2px')
+				// .style('stroke-width', '.2px')
 				.attr('transform', d => `translate(${5 * size},${0 * size})scale(0.01)`)
 			.merge(tiles).transition()
 				// .attr('transform', d => `translate(${d.x * size},${d.y * size})`)
@@ -92,6 +121,20 @@ Template.panelForColor.onRendered(function () {
 				.style('fill', d => ((d.scale>5) ? 'url(#gradient)' : d.rgb1));
 			tiles.exit()
 				.remove();
+
+			const marker = svg.selectAll('.huemarker')
+				.data([c0]);
+			marker.enter()
+				.append('circle')
+				.attr('class', 'huemarker')
+				.attr('r', size/2 + 5)
+				.style('stroke', '#fff')
+				.style('stroke-width', '.5px')
+			.merge(marker).transition()
+				.attr('transform', d => `translate(${(d.c+15)/10 * size},${(110-d.l)/10 * size})`)
+				.style('fill', d => d);
+			marker.moveToFront();
+
 
 		}
 
