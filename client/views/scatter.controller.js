@@ -119,7 +119,7 @@ Template.scatter.onRendered(function () {
 	physics({ velocity: 1 }).output(v => film.set('camera.render', v)).start();
 
 	film.touch.on('press', 		ev => console.log(ev));
-	film.touch.on('tap', 		ev => console.log(getWebglPixel(film.renderer.context, ev)));
+	film.touch.on('tap', 		ev => store.set('rgb', getWebglPixel(film.renderer.context, ev)));
 
 	// Monitor the image slice definition and update the scatter plot when it changes
 	self.autorun(function() {

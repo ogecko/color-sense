@@ -17,21 +17,21 @@ function tileValues(rgb) {
 	const rgb1 = d3c.rgb(rgb.r, rgb.g, rgb.b);
 	const hcl = d3c.hcl(rgb1);
 	const rgb2 = rgb1;
-	result.push({ x: 0, y: 1.5, scale: 13.5, hcl, rgb1, rgb2 });
-	_.range(0, 24, 2).forEach(h => {
-		const hue = hcl.h + (h - 5) * 360 / 24;
-		const max = maxChromaHcl(hue);
-		const hcl2 = d3c.hcl(hue, max.c, max.l);
-		const rgb1 = d3c.rgb(hcl2);
-		const rgb2 = rgb1.darker();
-		result.push({ x: h / 2, y: 0, scale: 1, hcl2, rgb1, rgb2 });
-	});
+	result.push({ x: 0, y: 0, scale: 13.5, hcl, rgb1, rgb2 });
+	// _.range(0, 24, 2).forEach(h => {
+	// 	const hue = hcl.h + (h - 5) * 360 / 24;
+	// 	const max = maxChromaHcl(hue);
+	// 	const hcl2 = d3c.hcl(hue, max.c, max.l);
+	// 	const rgb1 = d3c.rgb(hcl2);
+	// 	const rgb2 = rgb1.darker();
+	// 	result.push({ x: h / 2, y: 0, scale: 1, hcl2, rgb1, rgb2 });
+	// });
 	_.range(0, 11).forEach(v => {
 		_.range(0, 100, 10).forEach(c => {
 			const hcl3 = d3c.hcl(hcl.h, c, v * 10);
 			const rgb1 = d3c.rgb(hcl3);
 			const rgb2 = rgb1.darker();
-			if (isRGBok(rgb1)) result.push({ x: 1+c/10, y: 12-v, scale: 1, hcl3, rgb1, rgb2 });
+			if (isRGBok(rgb1)) result.push({ x: 1+c/10, y: 10.5-v, scale: 1, hcl3, rgb1, rgb2 });
 		});
 	});
 	return result;
@@ -45,7 +45,7 @@ Template.panelForColor.onRendered(function () {
 	const svg = d3s.select('.js-panelForColor')
 		.append('svg')
 		.attr('width', 230)
-		.attr('height', 300);
+		.attr('height', 240);
 
 	const gradient = svg.append("defs")
 		.append("linearGradient")
@@ -64,11 +64,21 @@ Template.panelForColor.onRendered(function () {
 
 	self.autorun(function() {
 		const doc = store.get('rgb');
-		if (doc)  {
-			const tiles = svg.selectAll('rect')
+		if (doc.isReady)  {
+			console.log(doc);
+			const c0 = d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b));
+			const c1 = (d3c.hcl(c0).l > 40) ? c0.darker(4) : c0.brighter(4);
+			const c2 = (d3c.hcl(c0).l > 40) ? c0.darker(1) : c0.brighter(1);
+
+			d3s.selectAll('.js-colortitle').style('background-color', c0);
+			d3s.selectAll('.js-colortitle .ui.header').style('color', c1);
+			// d3s.selectAll('.js-colorstats').style('background-color', c2);
+
+			const tiles = svg.selectAll('.huetile')
 				.data(tileValues(doc));
 			tiles.enter()
 				.append('rect')
+				.attr('class', 'huetile')
 				.attr('rx', d => 3 / d.scale)
 				.attr('ry', d => 3 / d.scale)
 				.attr('width', size-2)
@@ -90,6 +100,16 @@ Template.panelForColor.onRendered(function () {
 
 
 Template.panelForColor.helpers({
+	colorCode: function() {
+		const doc = store.get('rgb');
+		if (doc.isReady)  {
+			const c0 = d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b));
+			const v = numeral(c0.l/10).format('0');
+			const c = numeral(c0.c/10).format('0');
+			const h = String.fromCharCode(65 + c0.h / 360 * 24);
+			return ''+v+h+c;
+		}
+	},
 	hue: function () {
 		const doc = store.get('rgb');
 		if (doc.isReady)  return numeral(d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b)).h).format('0');

@@ -1,20 +1,31 @@
 <template name="panelForColor">
 	<div class="ui segment">
-		<div class="ui three mini blue statistics">
-			<div class="statistic">
-				<div class="value">
-					{{hue}}
-				</div>
-				<div class="label">
-					Hue
+		<div class="ui padded grid">
+			<div class="row js-colortitle ">
+				<div class="column">
+					<div class="ui header">
+					<span>{{colorCode}}</span>
+					<div class="ui sub header">Add color name</div>
+					</div>
 				</div>
 			</div>
+		</div>
+		<div class="js-panelForColor"></div>
+		<div class="ui three mini blue statistics js-colorstats">
 			<div class="statistic">
 				<div class="value">
 					{{value}}
 				</div>
 				<div class="label">
 					Value
+				</div>
+			</div>
+			<div class="statistic">
+				<div class="value">
+					{{hue}}
+				</div>
+				<div class="label">
+					Hue
 				</div>
 			</div>
 			<div class="statistic">
@@ -26,18 +37,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="ui one mini blue statistics">
-			<div class="statistic">
-				<div class="value">
-					{{threshold}}
-				</div>
-				<div class="label">
-					Threshold
-				</div>
-			</div>
-		</div>	
 
-		<div class="js-panelForColor"></div>
 
 	</div>
 </template>
