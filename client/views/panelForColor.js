@@ -96,12 +96,9 @@ Template.panelForColor.onRendered(function () {
 			console.log(doc);
 			const c0 = d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b));
 			const c1 = (d3c.hcl(c0).l > 40) ? c0.darker(4) : c0.brighter(4);
-			const c2 = (d3c.hcl(c0).l > 40) ? c0.darker(1) : c0.brighter(1);
 
 			d3s.selectAll('.js-colortitle').style('background-color', c0);
 			d3s.selectAll('.js-colortitle .ui.header').style('color', c1);
-
-
 
 			const tiles = svg.selectAll('.huetile')
 				.data(tileValues(doc));
@@ -115,6 +112,7 @@ Template.panelForColor.onRendered(function () {
 				// .style('stroke', '#fff')
 				// .style('stroke-width', '.2px')
 				.attr('transform', d => `translate(${5 * size},${0 * size})scale(0.01)`)
+				.on('click', d => store.set('rgb', d.rgb1))
 			.merge(tiles).transition()
 				// .attr('transform', d => `translate(${d.x * size},${d.y * size})`)
 				.attr('transform', d => `translate(${d.x * size},${d.y * size})scale(${d.scale})`)
@@ -131,7 +129,7 @@ Template.panelForColor.onRendered(function () {
 				.style('stroke', '#fff')
 				.style('stroke-width', '.5px')
 			.merge(marker).transition()
-				.attr('transform', d => `translate(${(d.c+15)/10 * size},${(110-d.l)/10 * size})`)
+				.attr('transform', d => `translate(${(d.c + 15) / 10 * size - 1},${(110 - d.l) / 10 * size - 1})`)
 				.style('fill', d => d);
 			marker.moveToFront();
 
