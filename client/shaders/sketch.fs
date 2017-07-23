@@ -201,6 +201,10 @@ void main( void ) {
 		float highest = 100.0 - u_maskLight/10.0*dx*u_maxContrast/100.0;
 		lch.x = (lch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
 	}
+
+	// float hx = 360.0 / 3.0;
+	// lch.z = floor(lch.z/hx)*hx;
+
 	lch.y = lch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
 	lch.y = lch.y * u_showColors / 100.0;
 	gl_FragColor = lch_to_rgb(lch);

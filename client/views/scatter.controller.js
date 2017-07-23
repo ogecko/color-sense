@@ -86,20 +86,20 @@ Template.scatter.onRendered(function () {
 	film.scene.add(scatter.points);
 
 	const labels = [
-		// { text: 'Windsor Yellow', 		r: 229, g: 195, b: 19 },
-		// { text: 'New Gamboge', 			r: 243, g: 174, b: 0 },
-		// { text: 'Gold Ochre', 			r: 240, g: 115, b: 11 },
-		// { text: 'Burnt Umber', 			r: 191, g: 127, b: 27 },
-		// { text: 'Burnt Sienna', 		r: 203, g: 69, b: 16 },
-		// { text: 'Cadnium Red',			r: 240, g: 50, b: 25 },
-		// { text: 'Perylene Maroon',		r: 168, g: 41, b: 33 },
-		// { text: 'Quinacridone Magenta',	r: 227, g: 54, b: 136 },
-		// { text: 'French Ultramarine',	r: 28, g: 86, b: 248 },
-		// { text: 'Windsor Blue',			r: 69, g: 173, b: 238 },
-		// { text: 'Cerulean Blue',		r: 49, g: 148, b: 199 },
-		// { text: 'W Green BS',			r: 55, g: 187, b: 171 },
-		// { text: 'W Green YS',			r: 62, g: 182, b: 132 },
-		// { text: 'Paynes Grey',			r: 48, g: 76, b: 100 },
+		{ text: 'Windsor Yellow', 		r: 229, g: 195, b: 19 },
+		{ text: 'New Gamboge', 			r: 243, g: 174, b: 0 },
+		{ text: 'Gold Ochre', 			r: 240, g: 115, b: 11 },
+		{ text: 'Burnt Umber', 			r: 191, g: 127, b: 27 },
+		{ text: 'Burnt Sienna', 		r: 203, g: 69, b: 16 },
+		{ text: 'Cadnium Red',			r: 240, g: 50, b: 25 },
+		{ text: 'Perylene Maroon',		r: 168, g: 41, b: 33 },
+		{ text: 'Quinacridone Magenta',	r: 227, g: 54, b: 136 },
+		{ text: 'French Ultramarine',	r: 28, g: 86, b: 248 },
+		{ text: 'Windsor Blue',			r: 69, g: 173, b: 238 },
+		{ text: 'Cerulean Blue',		r: 49, g: 148, b: 199 },
+		{ text: 'W Green BS',			r: 55, g: 187, b: 171 },
+		{ text: 'W Green YS',			r: 62, g: 182, b: 132 },
+		{ text: 'Paynes Grey',			r: 48, g: 76, b: 100 },
 	];
 
 	// Add the Labels
