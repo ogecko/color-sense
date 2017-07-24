@@ -1,0 +1,23 @@
+<template name="panelForPalette">
+	<div class="ui segment">
+	
+
+<div class="ui fluid multiple selection search  dropdown" multiple="">
+  <input type="hidden" name="country">
+  <i class="dropdown icon"></i>
+  <div class="default text">Select Palette Labels</div>
+  <div class="menu">
+  		{{#each label in labels}}
+			<div class="item" data-value="{{label.code}}">
+				<div class="ui label" style="background-color: {{label.rgb}};"></div>
+				<span>{{label.name}}</span>
+			</div>
+  		{{/each}}
+  </div>
+ </div>
+
+
+			<div class="js-panelForPalette"></div>
+
+	</div>
+</template>

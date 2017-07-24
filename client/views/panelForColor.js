@@ -5,6 +5,7 @@ import * as d3s from 'd3-selection';
 import * as d3t from 'd3-transition';
 import * as d3c from 'd3-color';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
+import { shortColorCode } from '/imports/color/shortColorCode.js';
 import { store } from '/imports/store/index.js';
 
 d3s.selection.prototype.moveToFront = function() {  
@@ -143,13 +144,7 @@ Template.panelForColor.onRendered(function () {
 Template.panelForColor.helpers({
 	colorCode: function() {
 		const doc = store.get('rgb');
-		if (doc.isReady)  {
-			const c0 = d3c.hcl(d3c.rgb(doc.r, doc.g, doc.b));
-			const v = numeral(c0.l/10).format('0');
-			const c = numeral(c0.c/10).format('0');
-			const h = String.fromCharCode(65 + c0.h / 360 * 24);
-			return ''+v+h+c;
-		}
+		if (doc.isReady)  return shortColorCode(doc.r, doc.g, doc.b);
 	},
 	hue: function () {
 		const doc = store.get('rgb');
