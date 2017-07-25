@@ -8,7 +8,7 @@
   <div class="default text">Select Palette Labels</div>
   <div class="menu">
   		{{#each label in labels}}
-			<div class="item" data-value="{{label.code}}">
+			<div class="item" data-value="{{label.hex}}">
 				<div class="ui label" style="background-color: {{label.rgb}};"></div>
 				<span>{{label.name}}</span>
 			</div>

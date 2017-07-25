@@ -6,7 +6,7 @@ import * as d3t from 'd3-transition';
 import * as d3c from 'd3-color';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
-import { shortColorCode } from '/imports/color/shortColorCode.js';
+import { shortColorCode, hexColorCode } from '/imports/color/shortColorCode.js';
 
 
 	const labels = [
@@ -48,6 +48,7 @@ function hydrateData(labels) {
 	return _.map(labels, label => ({
 		name: label.name,
 		code: shortColorCode(label.r, label.g, label.b),
+		hex: hexColorCode(label.r, label.g, label.b),
 		rgb: d3c.rgb(label.r, label.g, label.b),
 		hcl: d3c.hcl(d3c.rgb(label.r, label.g, label.b)),
 	}));
