@@ -32,7 +32,7 @@ export const store = {
 	_publication: (Meteor.isServer) && Meteor.publish('store', () => store._collection.find({})),
 	_subscription: undefined,
 	_methods: Meteor.methods({
-		'store.set': (id, obj) => store._collection.upsert({ _id: id }, obj),
+		'store.set': (id, obj) => store._collection.upsert({ _id: id }, _.omit(obj, 'isReady')),
 	}),
 };
 

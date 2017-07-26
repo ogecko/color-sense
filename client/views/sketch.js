@@ -108,18 +108,18 @@ Template.sketch.onRendered(function () {
 	self.keyboard.simple_combo('ctrl =', ev => film.zoomIn());
 	self.keyboard.simple_combo('ctrl -', ev => film.zoomOut());
 
-	self.keyboard.simple_combo('alt 1', ev => film.thresholdTo(10));
-	self.keyboard.simple_combo('alt 2', ev => film.thresholdTo(20));
-	self.keyboard.simple_combo('alt 3', ev => film.thresholdTo(30));
-	self.keyboard.simple_combo('alt 4', ev => film.thresholdTo(40));
-	self.keyboard.simple_combo('alt 5', ev => film.thresholdTo(50));
-	self.keyboard.simple_combo('alt 6', ev => film.thresholdTo(60));
-	self.keyboard.simple_combo('alt 7', ev => film.thresholdTo(70));
-	self.keyboard.simple_combo('alt 8', ev => film.thresholdTo(80));
-	self.keyboard.simple_combo('alt 9', ev => film.thresholdTo(90));
-	self.keyboard.simple_combo('alt 0', ev => film.thresholdTo(0));
-	self.keyboard.simple_combo('alt =', ev => film.thresholdUp());
-	self.keyboard.simple_combo('alt -', ev => film.thresholdDown());
+	self.keyboard.simple_combo('alt 1', ev => store.mutate('thresholdSettings', s => { s.numEdges = 0; return s; }));
+	self.keyboard.simple_combo('alt 2', ev => store.mutate('thresholdSettings', s => { s.numEdges = 10; return s; }));
+	self.keyboard.simple_combo('alt 3', ev => store.mutate('thresholdSettings', s => { s.numEdges = 20; return s; }));
+	self.keyboard.simple_combo('alt 4', ev => store.mutate('thresholdSettings', s => { s.numEdges = 30; return s; }));
+	self.keyboard.simple_combo('alt 5', ev => store.mutate('thresholdSettings', s => { s.numEdges = 40; return s; }));
+	self.keyboard.simple_combo('alt 6', ev => store.mutate('thresholdSettings', s => { s.numEdges = 50; return s; }));
+	self.keyboard.simple_combo('alt 7', ev => store.mutate('thresholdSettings', s => { s.numEdges = 60; return s; }));
+	self.keyboard.simple_combo('alt 8', ev => store.mutate('thresholdSettings', s => { s.numEdges = 70; return s; }));
+	self.keyboard.simple_combo('alt 9', ev => store.mutate('thresholdSettings', s => { s.numEdges = 80; return s; }));
+	self.keyboard.simple_combo('alt 0', ev => store.mutate('thresholdSettings', s => { s.numEdges = 90; return s; }));
+	self.keyboard.simple_combo('alt =', ev => store.mutate('thresholdSettings', s => { s.numEdges++; return s; }));
+	self.keyboard.simple_combo('alt -', ev => store.mutate('thresholdSettings', s => { s.numEdges--; return s; }));
 
 	self.keyboard.simple_combo('m', ev => {
 		store.set('imageSliceDefn', getImageSliceDefn(film.camera, film.namespace.img));
