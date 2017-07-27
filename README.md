@@ -15,7 +15,7 @@ Pan and zoom into an image fluidly showing all tones and colors. You can zoom in
 ![Reviewing Images](/public/images/img002-review.png)
 
 ## Color Space
-Tap on a region to get a readout of a particular color, its HSL values and other colors with the same hue. Mark a region and you can get see where the colors are located in HSL space. You can also add labels for the pigment colors you have in your palette.
+Tap on a region to get a readout of a particular color, its HSL values and other colors with the same hue. Mark a region and you can get see where the colors are located in HSL space. You can also add labels for the pigment colors you have in your palette. On a Desktop Mouse 1 rotates the HSL color space, Mouse 2 pans the color space and the Mouse Wheel zooms into the color space. On a Touch device, One Finger Drag rotates the HSL color space, Three Finger drag pans the color space and Pinch zooms the color space.
 
 ![Color Space](/public/images/img003-hsl.png)
 
@@ -36,6 +36,7 @@ To see which are hard or soft edges, check Show Soft Edges. Edges between levels
 
 ## Mask Dark Levels
 Select levels 1, 2, upwards to mask the dark levels. This allows you to paint the light tones first, ignoring any dark glazes that will be added in later.
+
 ![Mask Darks](/public/images/img007-mask1.png)
 
 ## Mask Light Levels
