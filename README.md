@@ -14,10 +14,12 @@ Pan and zoom into an image fluidly showing all tones and colors. You can zoom in
 
 ![Reviewing Images](/public/images/img002-review.png)
 
-## Color Space
-Tap on a region to get a readout of a particular color, its HSL values and other colors with the same hue. Mark a region and you can get see where the colors are located in HSL space. You can also add labels for the pigment colors you have in your palette. On a Desktop Mouse 1 rotates the HSL color space, Mouse 2 pans the color space and the Mouse Wheel zooms into the color space. On a Touch device, One Finger Drag rotates the HSL color space, Three Finger drag pans the color space and Pinch zooms the color space.
+## HCL Color Space
+Tap on a region to get a readout of a particular color, its HCL values and other colors with the same hue. Mark a region and you can get see where the colors are located in HCL space. You can also add labels for the pigment colors you have in your palette. 
 
-![Color Space](/public/images/img003-hsl.png)
+On a Desktop Mouse 1 rotates the HCL color space, Mouse 2 pans the color space and the Mouse Wheel zooms into the color space. On a Touch device, One Finger Drag rotates the HCL color space, Three Finger drag pans the color space and Pinch zooms the color space.
+
+![Color Space](/public/images/img003-hcl.png)
 
 ## Black and White
 To see how well the image reads without color, uncheck Show Colors and zoom out. All Chroma and Hue are removed from the image and only the tone is shown.
