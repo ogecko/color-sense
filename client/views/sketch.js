@@ -6,6 +6,7 @@ import THREE from 'three';
 import Hammer from  'hammerjs';
 import popmotionTHREERenderer from '/imports/3d/popmotionTHREERenderer.js';
 import ImageMesh from '/imports/3d/ImageMesh.js';
+import { createRulerMesh } from '/imports/3d/drawRuler.js';
 import { huePlate, hueSpace, hueCursor, getCPos, getVPos } from '/imports/3d/huePlate.js';
 import { VHC, maxChroma, rgb_to_vhc, vhc_to_rgb, wrapFromTo, dsp3 } from '/imports/color/vhc.js';
 import { tween, physics, easing }  from 'popmotion';
@@ -37,6 +38,7 @@ Template.sketch.onRendered(function () {
 	const container = self.$('.js-placeholder')[0];
 	const film = self.film = popmotionTHREERenderer(container);
 
+
 	self.autorun(function() {
 		const imageName = FlowRouter.getQueryParam('image');
 		const fileName = FlowRouter.getQueryParam('file');
@@ -47,6 +49,11 @@ Template.sketch.onRendered(function () {
 			if (img) film.scene.remove(img);
 			img = ImageMesh(path, 'sketch', film);
 			film.scene.add(img);
+
+			// const ruler = createRulerMesh();
+			// img.add(ruler);
+
+
 			film.setNameSpace({ img });
 			film.thresholdTo(50);
 		}
@@ -79,7 +86,7 @@ Template.sketch.onRendered(function () {
 	film.touch.on('pan', 		ev => noLockView && film.panToContinueDrag(ev));
 	film.touch.on('panend', 	ev => noLockView && film.panToEndWithInertia(ev));
 
-	film.touch.on('press', 		ev => console.log(ev));
+	film.touch.on('press', 		ev => console.log(getImageSliceDefn(film.camera, film.namespace.img)));
 	film.touch.on('tap', 		ev => {
 		var pixelBuffer = new Uint8Array( 4 );
 
@@ -95,18 +102,18 @@ Template.sketch.onRendered(function () {
 		store.set('rgb', rgb);
 	});
 
-	self.keyboard.simple_combo('ctrl 1', ev => film.zoomTo(1.5));
-	self.keyboard.simple_combo('ctrl 2', ev => film.zoomTo(2));
-	self.keyboard.simple_combo('ctrl 3', ev => film.zoomTo(3));
-	self.keyboard.simple_combo('ctrl 4', ev => film.zoomTo(5));
-	self.keyboard.simple_combo('ctrl 5', ev => film.zoomTo(7));
-	self.keyboard.simple_combo('ctrl 6', ev => film.zoomTo(10));
-	self.keyboard.simple_combo('ctrl 7', ev => film.zoomTo(15));
-	self.keyboard.simple_combo('ctrl 8', ev => film.zoomTo(20));
-	self.keyboard.simple_combo('ctrl 9', ev => film.zoomTo(30));
-	self.keyboard.simple_combo('ctrl 0', ev => film.zoomTo(1));
-	self.keyboard.simple_combo('ctrl =', ev => film.zoomIn());
-	self.keyboard.simple_combo('ctrl -', ev => film.zoomOut());
+	self.keyboard.simple_combo('ctrl 1', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.5; return s; }));
+	self.keyboard.simple_combo('ctrl 2', ev => store.mutate('viewSettings', s => { s.zoomLevel = 2.0; return s; }));
+	self.keyboard.simple_combo('ctrl 3', ev => store.mutate('viewSettings', s => { s.zoomLevel = 3.0; return s; }));
+	self.keyboard.simple_combo('ctrl 4', ev => store.mutate('viewSettings', s => { s.zoomLevel = 5.0; return s; }));
+	self.keyboard.simple_combo('ctrl 5', ev => store.mutate('viewSettings', s => { s.zoomLevel = 7.0; return s; }));
+	self.keyboard.simple_combo('ctrl 6', ev => store.mutate('viewSettings', s => { s.zoomLevel = 10.0; return s; }));
+	self.keyboard.simple_combo('ctrl 7', ev => store.mutate('viewSettings', s => { s.zoomLevel = 15.0; return s; }));
+	self.keyboard.simple_combo('ctrl 8', ev => store.mutate('viewSettings', s => { s.zoomLevel = 20.0; return s; }));
+	self.keyboard.simple_combo('ctrl 9', ev => store.mutate('viewSettings', s => { s.zoomLevel = 30.0; return s; }));
+	self.keyboard.simple_combo('ctrl 0', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.0; return s; }));
+	self.keyboard.simple_combo('ctrl =', ev => film.zoomIn(0.1));
+	self.keyboard.simple_combo('ctrl -', ev => film.zoomOut(0.1));
 
 	self.keyboard.simple_combo('alt 1', ev => store.mutate('thresholdSettings', s => { s.numEdges = 0; return s; }));
 	self.keyboard.simple_combo('alt 2', ev => store.mutate('thresholdSettings', s => { s.numEdges = 10; return s; }));

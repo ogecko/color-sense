@@ -108,18 +108,18 @@ class popmotionTHREERenderer extends Renderer {
 		// ]).start();
 	}
 
-	zoomIn() {
+	zoomIn(amount = 1) {
 		const startScale = this.onRead('camera.zoom');
-		const endScale = convertLevelToScale(convertScaleToLevel(startScale) + 1);
+		const endScale = convertLevelToScale(convertScaleToLevel(startScale) + amount);
 		this.panToCenterZoom(startScale, endScale);
 		tween({ from: startScale, to: endScale })
 			.output(v => this.set('camera.zoom', v))
 			.start();
 	}
 
-	zoomOut() {
+	zoomOut(amount = 1) {
 		const startScale = this.onRead('camera.zoom');
-		const endScale = convertLevelToScale(convertScaleToLevel(startScale) - 1);
+		const endScale = convertLevelToScale(convertScaleToLevel(startScale) - amount);
 		this.panToCenterZoom(startScale, endScale);
 		tween({ from: startScale, to: endScale })
 			.output(v => this.set('camera.zoom', v))
