@@ -29,7 +29,9 @@ To see how well the image reads without color, uncheck Show Colors and zoom out.
 ![Black and White](/public/images/img004-bw.png)
 
 ## Thresholds
-Select the number of tone thresholds to view the highlights, midtones and darks. Selecting the Raise and Lower will adjust the number of levels. Selecting Levels once will remove any Masked Tones. Selecting Levels twice will remove the thresholds and go back to All Levels. 
+Select the number of tone thresholds to view the highlights, midtones and darks. The range of tones will be divided into the number of levels with the top and bottom levels having half the tone range of all other levels.
+
+Selecting the Raise and Lower will adjust the number of levels. Selecting Levels once will remove any Masked Tones. Selecting Levels twice will remove the thresholds and go back to All Levels. 
 
 ![Thresholds](/public/images/img005-levels.png)
 
