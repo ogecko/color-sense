@@ -23,6 +23,8 @@ On a Desktop Mouse 1 rotates the HCL color space, Mouse 2 pans the color space a
 
 ![Color Space](/public/images/img003-hcl.png)
 
+You can also view the tones as a 3D surface plot.
+
 ## Black and White
 To see how well the image reads without color, uncheck Show Colors and zoom out. All Chroma and Hue are removed from the image and only the tone is shown.
 
