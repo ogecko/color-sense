@@ -47,7 +47,7 @@ Template.sketch.onRendered(function () {
 		if (fileName) path = `/gridfs/uploads/md5/${fileName}`;
 		if (path) {
 			if (img) film.scene.remove(img);
-			img = ImageMesh(path, 'sketch', film);
+			img = ImageMesh(path, 'ciecam02', film);
 			film.scene.add(img);
 
 			// const ruler = createRulerMesh();
