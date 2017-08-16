@@ -15,7 +15,10 @@ import { createLabelSprite } from '/imports/3d/drawLabel.js';
 import { createBackplaneMaterials } from '/imports/3d/drawBackplane.js';
 import { lerpObject } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
+import chromatist from 'chromatist/lib/chromatist.js';
 
+const sRGB = chromatist.rgb.Converter('sRGB');
+const CIECAM02 = chromatist.ciecam.Converter({ adapting_luminance: 100, background_luminance: 20, whitepoint: 'D65', discounting: false });
 
 const d3 = { ...d3scale, ...d3color, ...d3shape };
 let oldHcl = undefined;
@@ -104,9 +107,9 @@ Template.scatter.onRendered(function () {
 
 	// Add the Labels
 	_.each(labels, d => {
-		const rgb = d3.rgb(d.r, d.g, d.b);
-		const hcl = d3.hcl(rgb);
-		const pos = new THREE.Vector3(xScale(hcl.h), yScale(hcl.l), zScale(hcl.c));
+		const xyz = sRGB.to_XYZ([d.r, d.g, d.b]);
+		const jch = CIECAM02.forward_model(xyz);
+		const pos = new THREE.Vector3(xScale(jch.h), yScale(jch.J), zScale(jch.C));
 		const label = createLabelSprite({ text: d.text });
 		label.position.copy(pos);
 		film.scene.add(label);

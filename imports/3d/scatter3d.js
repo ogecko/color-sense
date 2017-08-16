@@ -1,6 +1,9 @@
 import THREE from 'three';
 import { VHC, maxChroma, rgb_to_vhc, vhc_to_rgb, wrapFromTo, dsp3 } from '/imports/color/vhc.js';
-import * as d3c from "d3-color";
+import chromatist from 'chromatist/lib/chromatist.js';
+
+const sRGB = chromatist.rgb.Converter('sRGB');
+const CIECAM02 = chromatist.ciecam.Converter({ adapting_luminance: 100, background_luminance: 20, whitepoint: 'D65', discounting: false });
 
 const ditherHue = () => Math.random() * 1.41;		// 360/255
 const ditherValue = () => Math.random() * 0.39;		// 100/255
@@ -51,10 +54,12 @@ class Scatter3d {
 			colors.setY(i, g / 255);
 			colors.setZ(i, b / 255);
 			// set position of vertex
-			var vhc = d3c.hcl(d3c.rgb(r, g, b));
-			positions.setX(i, this.xScale(vhc.h));
-			positions.setY(i, this.yScale(vhc.l));
-			positions.setZ(i, this.zScale(vhc.c));
+			const xyz = sRGB.to_XYZ([r / 255, g / 255, b / 255]);
+			const jch = CIECAM02.forward_model(xyz);
+
+			positions.setX(i, this.xScale(jch.h));
+			positions.setY(i, this.yScale(jch.J));
+			positions.setZ(i, this.zScale(jch.C));
 		}
 		colors.updateRange = { offset: 0, count };
 		colors.needsUpdate = true;
@@ -76,10 +81,11 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			var hcl = d3c.hcl(d3c.rgb(pixels.getX(i), pixels.getY(i), pixels.getZ(i)));
-			positions.setX(i, this.xScale(hcl.h+ditherHue()));
-			positions.setY(i, this.yScale(hcl.l+ditherValue()));
-			positions.setZ(i, this.zScale(hcl.c+ditherValue()));
+			const xyz = sRGB.to_XYZ([pixels.getX(i) / 255, pixels.getY(i) / 255, pixels.getZ(i) / 255]);
+			const jch = CIECAM02.forward_model(xyz);
+			positions.setX(i, this.xScale(jch.h+ditherHue()));
+			positions.setY(i, this.yScale(jch.J+ditherValue()));
+			positions.setZ(i, this.zScale(jch.C+ditherValue()));
 		}
 		colors.updateRange = { offset: 0, count };
 		colors.needsUpdate = true;
@@ -103,10 +109,11 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			var hcl = d3c.hcl(d3c.rgb(pixels.getX(i), pixels.getY(i), pixels.getZ(i)));
+			const xyz = sRGB.to_XYZ([pixels.getX(i) / 255, pixels.getY(i) / 255, pixels.getZ(i) / 255]);
+			const jch = CIECAM02.forward_model(xyz);
 			positions.setX(i, (i%width - width/2)/30);
 			positions.setY(i, (Math.round(i/width)-width/2)/30);
-			positions.setZ(i, this.zScale(hcl.l));
+			positions.setZ(i, this.zScale(jch.J));
 
 		}
 		colors.updateRange = { offset: 0, count };
