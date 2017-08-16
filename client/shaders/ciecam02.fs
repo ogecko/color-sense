@@ -8,7 +8,9 @@ uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
 varying vec2 v_uv;
 
-vec3 D65 = vec3(95.047, 100.000, 108.883);
+float pi = 3.14159;
+vec3 D65 = vec3(95.047, 100.0, 108.883);
+vec3 D50 = vec3(96.422, 100.0,  82.521);
 
 // linear transform matrix for lms = xyz * MCAT02
 mat3 MCAT02 = mat3(0.7328,0.4296,-0.1624,         -0.7036,1.6975,0.0061,         0.0030,0.0136,0.9834);
@@ -174,11 +176,11 @@ vec4 calc_ANZn(vec3 xyz_w, float La, float Yb, vec4 DF) {
 	return vec4(Aw, Nbb, z, n);
 }
 
-// convert xyz to lab
-vec4 fwd_xyz2jch(vec4 color) {
-	vec3 FcN = calc_FcN(1.0);
-    vec4 DF = calc_DF(D65, 100.0, FcN); 
-    vec4 ANZn = calc_ANZn(D65, 100.0, 20.0, DF); 
+// convert color xyz to ciecam jch given viewing conditions xyz_w, La, Yb and S
+vec4 fwd_xyz2jch(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
+	vec3 FcN = calc_FcN(S);
+    vec4 DF = calc_DF(xyz_w, La, FcN); 
+    vec4 ANZn = calc_ANZn(xyz_w, La, Yb, DF); 
 
 	vec3 xyz = vec3(color);
 	vec3 lms_p = ((xyz * MCAT02) * vec3(DF)) * MHPE;
@@ -194,11 +196,11 @@ vec4 fwd_xyz2jch(vec4 color) {
 	return vec4(J, C, h, color.a);
 }
  
-// convert lab to xyz
-vec4 rev_jch2xyz(vec4 color) {
-	vec3 FcN = calc_FcN(1.0);
-    vec4 DF = calc_DF(D65, 100.0, FcN); 
-    vec4 ANZn = calc_ANZn(D65, 100.0, 20.0, DF); 
+// convert color jch to xyz given viewing conditions xyz_w, La, Yb and S
+vec4 rev_jch2xyz(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
+	vec3 FcN = calc_FcN(S);
+    vec4 DF = calc_DF(xyz_w, La, FcN); 
+    vec4 ANZn = calc_ANZn(xyz_w, La, Yb, DF); 
 
     float J = color.x; float C = color.y; float h_rad = radians(color.z);
     float A = ANZn.x * pow(J / 100.0, 1.0 / FcN.y / ANZn.z);
@@ -228,16 +230,16 @@ vec4 rev_jch2xyz(vec4 color) {
 }
 
 
-// convert rgb to ciecam02 jch
-vec4 fwd_rgb2jch(vec4 color) {
+// convert color rgb to ciecam02 jch given viewing conditions xyz_w, La, Yb and S
+vec4 fwd_rgb2jch(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
 	vec4 xyz = rev_rgb2xyz(color);
-	vec4 jch = fwd_xyz2jch(xyz);
+	vec4 jch = fwd_xyz2jch(xyz, xyz_w, La, Yb, S);
 	return jch;
 }
 
-// convert ciecam02 to rgb 
-vec4 rev_jch2rgb(vec4 color) {
-	vec4 xyz = rev_jch2xyz(color);
+// convert color ciecam02 jch to rgb given viewing conditions xyz_w, La, Yb and S
+vec4 rev_jch2rgb(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
+	vec4 xyz = rev_jch2xyz(color, xyz_w, La, Yb, S);
 	vec4 rgb = fwd_xyz2rgb(xyz);
 	return rgb;
 }
@@ -249,7 +251,7 @@ float hatch() {
 }
 
 void main( void ) {
-	vec4 lch = fwd_rgb2jch(texture2D(u_tex0, v_uv));
+	vec4 lch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
 
 	if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
 		float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
@@ -271,5 +273,5 @@ void main( void ) {
 	lch.y = lch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
 	lch.y = lch.y * u_showColors / 100.0;
 
-	gl_FragColor = rev_jch2rgb(lch);
+	gl_FragColor = rev_jch2rgb(lch, D65, 100.0, 20.0, 1.0);
 }
