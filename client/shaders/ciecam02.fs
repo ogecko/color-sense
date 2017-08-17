@@ -1,3 +1,4 @@
+uniform float u_time;
 uniform float u_numEdges;
 uniform float u_maskDark;
 uniform float u_maskLight;
@@ -250,28 +251,47 @@ float hatch() {
 	return mod(gl_FragCoord.x-gl_FragCoord.y, 15.0)/15.0;	
 }
 
+bool in_gamut(float c) {
+	// return ((c>= -0.0) && (c<=1.0)); // this crops the sRGB whites and blacks for J=100 and J=0
+	return (c<=1.0215);		// ensure valid sRGB colors for J=[0..100], C=0 and ALL hues, given viewing conditions D65, La=100, Yb=20
+}
+
+bool in_gamut_sRGB(vec4 rgb) {
+	return (in_gamut(rgb.x) && in_gamut(rgb.y) && in_gamut(rgb.z));
+}
+
 void main( void ) {
-	vec4 lch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
+	vec4 jch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
 
 	if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
 		float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
-		float lx = max(lch.x, dx * u_maskDark / 10.0);				// clamp out n dark bands eg 0 = show all, 10 = no blacks, 20=no blacks or darks
+		float lx = max(jch.x, dx * u_maskDark / 10.0);				// clamp out n dark bands eg 0 = show all, 10 = no blacks, 20=no blacks or darks
 		float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out n light bands eg 0 = show all, 10 = no whites, 20=no whites or lights
 		float bv = (ly + dx / 2.0) / dx;		// calculate where lightness falls into the bands
 		float b = floor(bv);					// band number 0,1,2,..n where n=#edges eg 2 edges n = 0:black,1:midtone,2:white
 		float c = fract(bv) * 100.0;			// how far into band 0 to 100%
-		lch.x = b * dx;																				// quantise the lightness
-		lch.x = lch.x - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// optionally add shoft edges
+		jch.x = b * dx;																				// quantise the lightness
+		jch.x = jch.x - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// optionally add shoft edges
 		float lowest = 0.0 + u_maskDark/10.0*dx*u_maxContrast/100.0;
 		float highest = 100.0 - u_maskLight/10.0*dx*u_maxContrast/100.0;
-		lch.x = (lch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
+		jch.x = (jch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
 	}
 
 	// float hx = 360.0 / 3.0;
-	// lch.z = floor(lch.z/hx)*hx;
+	// jch.z = floor(jch.z/hx)*hx;
 
-	lch.y = lch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
-	lch.y = lch.y * u_showColors / 100.0;
+	jch.y = jch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
+	jch.y = jch.y * u_showColors / 100.0;
 
-	gl_FragColor = rev_jch2rgb(lch, D65, 100.0, 20.0, 1.0);
+	// plate of J&C for a given hue which changes over time
+	// jch.x = v_uv.y * 100.0;
+	// jch.y = v_uv.x * 30.0;
+	// jch.z = u_time * 30.0;
+
+	vec4 rgb = rev_jch2rgb(jch, D65, 20.0, 20.0, 2.0);
+
+	// rgb.w = float(in_gamut_sRGB(rgb))+0.05-float(mod(jch.x, 9.0)<1.0||mod(jch.y, 2.5)<0.20)*0.1;
+
+	gl_FragColor = rgb;
+
 }

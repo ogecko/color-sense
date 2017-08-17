@@ -11,6 +11,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 	const uniforms = JSON.parse(JSON.stringify(Shaders[shaderName].uniforms));
 	const material = new THREE.ShaderMaterial({
 		uniforms,
+		transparent: true,
 		vertexShader: Shaders[shaderName].vertexShader,
 		fragmentShader: Shaders[shaderName].fragmentShader,
 	});
