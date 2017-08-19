@@ -190,8 +190,8 @@ vec4 fwd_xyz2jch(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
 	float J = 100.0 * pow(Aab.x / ANZn.x, FcN.y * ANZn.z); 
 	float h_rad = atan(Aab.z, Aab.y); 			//in GLSL this is atan2
 	float h = degrees(h_rad) + float(degrees(h_rad) < 0.0) * 360.0;
-	float e_t = 1.0/4.0 * (cos(h_rad + 2.0) + 3.8);
-	float t = (50000.0 / 13.0 * FcN.z * ANZn.w * e_t * sqrt(Aab.y*Aab.y + Aab.z*Aab.z) 
+	float e_t = 1.0 / 4.0 * (cos(h_rad + 2.0) + 3.8);
+	float t = (50000.0 / 13.0 * FcN.z * ANZn.y * e_t * sqrt(Aab.y*Aab.y + Aab.z*Aab.z) 
 			  / (lms_a.x + lms_a.y + 21.0 / 20.0 * lms_a.z));
 	float C = pow(t, 0.9) * sqrt(J / 100.0) * pow(1.64 - pow(0.29, ANZn.w), 0.73);
 	return vec4(J, C, h, color.a);
@@ -207,7 +207,7 @@ vec4 rev_jch2xyz(vec4 color, vec3 xyz_w, float La, float Yb, float S) {
     float A = ANZn.x * pow(J / 100.0, 1.0 / FcN.y / ANZn.z);
 	float t = pow(C / (sqrt(J / 100.0) * pow(1.64 - pow(0.29, ANZn.w), 0.73)), 10.0 / 9.0);
 	float e_t = 1.0 / 4.0 * (cos(h_rad + 2.0) + 3.8);   
-	float p_1 = 50000.0 / 13.0 * FcN.z * ANZn.w * e_t / t;
+	float p_1 = 50000.0 / 13.0 * FcN.z * ANZn.y * e_t / t;
 	float p_2 = A / ANZn.y + 0.305;
 	float q_1 = p_2 * 61.0/20.0 * 460.0/1403.0;
 	float q_2 = 61.0/20.0 * 220.0/1403.0;
@@ -285,12 +285,12 @@ void main( void ) {
 
 	// plate of J&C for a given hue which changes over time
 	// jch.x = v_uv.y * 100.0;
-	// jch.y = v_uv.x * 30.0;
+	// jch.y = v_uv.x * 125.0;
 	// jch.z = u_time * 30.0;
 
-	vec4 rgb = rev_jch2rgb(jch, D65, 20.0, 20.0, 2.0);
+	vec4 rgb = rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0);
 
-	// rgb.w = float(in_gamut_sRGB(rgb))+0.05-float(mod(jch.x, 9.0)<1.0||mod(jch.y, 2.5)<0.20)*0.1;
+	// rgb.w = float(in_gamut_sRGB(rgb))+0.05-float(mod(jch.x, 10.0)<0.5||mod(jch.y, 10.0)<0.5)*0.1;
 
 	gl_FragColor = rgb;
 
