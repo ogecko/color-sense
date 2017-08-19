@@ -29,6 +29,7 @@ Template.sketch.onRendered(function () {
 	const self = this;
 	let noLockView = true;
 	let img = undefined;
+	let clock = undefined;
 
 	self.$('.ui.sidebar').sidebar({
 		dimPage: false,
@@ -55,6 +56,13 @@ Template.sketch.onRendered(function () {
 
 
 			film.setNameSpace({ img });
+			
+			if (!clock) {
+				clock = physics({ velocity: 1 })
+					.output(v => film.set('img.u_time', film.clock.getElapsedTime()))
+					.start();
+			}
+
 			film.thresholdTo(50);
 		}
 	});

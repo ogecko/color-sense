@@ -6,7 +6,7 @@ import * as d3t from 'd3-transition';
 import * as d3c from 'd3-color';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { shortColorCode } from '/imports/color/shortColorCode.js';
-import { CIECAM02 } from '/imports/color/ciecam02.js';
+import { ciecam02 } from '/imports/color/ciecam02.js';
 import { store } from '/imports/store/index.js';
 
 d3s.selection.prototype.moveToFront = function() {  
@@ -22,7 +22,7 @@ Template.panelForColor.onCreated(function() {
 
 function tileValues(rgb) {
 	const result = [];
-	const jch = CIECAM02.rgb2jch(rgb.r, rgb.g, rgb.b);
+	const jch = ciecam02.rgb2jch(rgb.r, rgb.g, rgb.b);
 	const rgb2 = rgb;
 	result.push({ x: 0, y: 0, scale: 13.5, jch, rgb, rgb2 });
 	// _.range(0, 24, 2).forEach(h => {
@@ -36,7 +36,7 @@ function tileValues(rgb) {
 	_.range(0, 11).forEach(v => {
 		_.range(0, 100, 10).forEach(c => {
 			const jch1 = { J: v * 10, C: c, h: jch.h };
-			const rgb1 = CIECAM02.jch2rgb(jch1.J, jch1.C, jch1.h);
+			const rgb1 = ciecam02.jch2rgb(jch1.J, jch1.C, jch1.h);
 			const rgb2 = rgb1;
 			if (isRGBok(rgb1)) result.push({ x: 1+c/10, y: 10.5-v, scale: 1, jch1, rgb1, rgb2 });
 		});
@@ -96,7 +96,7 @@ Template.panelForColor.onRendered(function () {
 		if (doc.isReady)  {
 			console.log(doc);
 			const c0 = d3c.rgb(doc.r, doc.g, doc.b);
-			const c1 = CIECAM02.rgbDeltaJ(doc.r, doc.g, doc.b, -40);
+			const c1 = ciecam02.rgbDeltaJ(doc.r, doc.g, doc.b, -40);
 
 			d3s.selectAll('.js-colortitle').style('background-color', c0);
 			d3s.selectAll('.js-colortitle .ui.header').style('color', c1);
@@ -122,7 +122,7 @@ Template.panelForColor.onRendered(function () {
 				.remove();
 
 			const marker = svg.selectAll('.huemarker')
-				.data([CIECAM02.rgb2jch(doc.r, doc.g, doc.b)]);
+				.data([ciecam02.rgb2jch(doc.r, doc.g, doc.b)]);
 			marker.enter()
 				.append('circle')
 				.attr('class', 'huemarker')
@@ -148,15 +148,15 @@ Template.panelForColor.helpers({
 	},
 	hue: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(CIECAM02.rgb2jch(doc.r, doc.g, doc.b).h).format('0');
+		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).h).format('0');
 	},
 	value: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(CIECAM02.rgb2jch(doc.r, doc.g, doc.b).J).format('0');
+		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).J).format('0');
 	},
 	chroma: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(CIECAM02.rgb2jch(doc.r, doc.g, doc.b).C).format('0');
+		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).C).format('0');
 	},
 	threshold: function () {
 		const doc = store.get('threshold');
