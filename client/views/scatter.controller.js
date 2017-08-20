@@ -15,14 +15,12 @@ import { createLabelSprite } from '/imports/3d/drawLabel.js';
 import { createBackplaneMaterials } from '/imports/3d/drawBackplane.js';
 import { lerpObject } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
-import chromatist from 'chromatist/lib/chromatist.js';
+import { ciecam02 } from '/imports/color/ciecam02.js';
 
-const sRGB = chromatist.rgb.Converter('sRGB');
-const CIECAM02 = chromatist.ciecam.Converter({ adapting_luminance: 100, background_luminance: 20, whitepoint: 'D65', discounting: false });
 
 const d3 = { ...d3scale, ...d3color, ...d3shape };
-let oldHcl = undefined;
-let newHcl = undefined;
+let oldJch = undefined;
+let newJch = undefined;
 
 Template.scatter.onCreated(function() {
 	const self = this;
@@ -76,12 +74,12 @@ Template.scatter.onRendered(function () {
 	cylinder.rotateX(Math.PI / 2);
 	cylinder.scale.y = zScale(0.001);
 	film.scene.add(cylinder);
-	function setCylinder(hcl) {
-		film.set('huePlateGroup.x', xScale(hcl.h));
-		film.set('cylinder.x', xScale(hcl.h));
-		film.set('cylinder.y', yScale(hcl.l));
-		film.set('cylinder.scaleY', zScale(hcl.c + 0.00001));
-		film.set('cylinder.z', zScale(hcl.c / 2));
+	function setCylinder(jch) {
+		film.set('huePlateGroup.x', xScale(jch.h));
+		film.set('cylinder.x', xScale(jch.h));
+		film.set('cylinder.y', yScale(jch.J));
+		film.set('cylinder.scaleY', zScale(jch.C + 0.00001));
+		film.set('cylinder.z', zScale(jch.C / 2));
 	}
 
 	// Add the scatter points
@@ -107,8 +105,7 @@ Template.scatter.onRendered(function () {
 
 	// Add the Labels
 	_.each(labels, d => {
-		const xyz = sRGB.to_XYZ([d.r, d.g, d.b]);
-		const jch = CIECAM02.forward_model(xyz);
+		const jch = ciecam02.rgb2jch(d.r, d.g, d.b);
 		const pos = new THREE.Vector3(xScale(jch.h), yScale(jch.J), zScale(jch.C));
 		const label = createLabelSprite({ text: d.text });
 		label.position.copy(pos);
@@ -155,13 +152,13 @@ Template.scatter.onRendered(function () {
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc.isReady) {
-			oldHcl = _.clone(newHcl);
-			newHcl = d3.hcl(d3.rgb(doc.r, doc.g, doc.b));
-			if (!oldHcl) {
-				setCylinder(newHcl);
+			oldJch = _.clone(newJch);
+			newJch = ciecam02.rgb2jch(doc.r, doc.g, doc.b);
+			if (!oldJch) {
+				setCylinder(newJch);
 			} else {
 				tween({ ease: easing.easeInOut, duration: 500 })
-					.output(t => setCylinder(lerpObject(t, oldHcl, newHcl)))
+					.output(t => setCylinder(lerpObject(t, oldJch, newJch)))
 					.start();
 			}
 		}

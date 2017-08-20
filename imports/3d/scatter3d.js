@@ -1,9 +1,6 @@
 import THREE from 'three';
 import { VHC, maxChroma, rgb_to_vhc, vhc_to_rgb, wrapFromTo, dsp3 } from '/imports/color/vhc.js';
-import chromatist from 'chromatist/lib/chromatist.js';
-
-const sRGB = chromatist.rgb.Converter('sRGB');
-const CIECAM02 = chromatist.ciecam.Converter({ adapting_luminance: 100, background_luminance: 20, whitepoint: 'D65', discounting: false });
+import { ciecam02 } from '/imports/color/ciecam02.js';
 
 const ditherHue = () => Math.random() * 1.41;		// 360/255
 const ditherValue = () => Math.random() * 0.39;		// 100/255
@@ -54,8 +51,7 @@ class Scatter3d {
 			colors.setY(i, g / 255);
 			colors.setZ(i, b / 255);
 			// set position of vertex
-			const xyz = sRGB.to_XYZ([r / 255, g / 255, b / 255]);
-			const jch = CIECAM02.forward_model(xyz);
+			const jch = ciecam02.rgb2jch(r, g, b);
 
 			positions.setX(i, this.xScale(jch.h));
 			positions.setY(i, this.yScale(jch.J));
@@ -81,8 +77,7 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			const xyz = sRGB.to_XYZ([pixels.getX(i) / 255, pixels.getY(i) / 255, pixels.getZ(i) / 255]);
-			const jch = CIECAM02.forward_model(xyz);
+			const jch = ciecam02.rgb2jch(pixels.getX(i), pixels.getY(i), pixels.getZ(i));
 			positions.setX(i, this.xScale(jch.h+ditherHue()));
 			positions.setY(i, this.yScale(jch.J+ditherValue()));
 			positions.setZ(i, this.zScale(jch.C+ditherValue()));
@@ -109,8 +104,7 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			const xyz = sRGB.to_XYZ([pixels.getX(i) / 255, pixels.getY(i) / 255, pixels.getZ(i) / 255]);
-			const jch = CIECAM02.forward_model(xyz);
+			const jch = ciecam02.rgb2jch(pixels.getX(i), pixels.getY(i), pixels.getZ(i));
 			positions.setX(i, (i%width - width/2)/30);
 			positions.setY(i, (Math.round(i/width)-width/2)/30);
 			positions.setZ(i, this.zScale(jch.J));
