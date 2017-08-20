@@ -3,6 +3,7 @@ import { _ } from 'meteor/underscore';
 import * as d3scale from 'd3-scale';
 import * as d3shape from 'd3-shape';
 import * as d3color from 'd3-color';
+import { ciecam02 } from '/imports/color/ciecam02.js';
 
 const d3 = { ...d3scale, ...d3color, ...d3shape };
 
@@ -31,12 +32,12 @@ export function drawBackplane(ctx, options) {
 			const dvh = (h / dh) % 2;
 			const dvv = ((dv + v) / dv) % 2;
 			const tileValue = 52 + (dvh ^ dvv) * 4;
-			ctx.fillStyle = d3.hcl(h, 50, tileValue);
+			ctx.fillStyle = ciecam02.jch2rgb(tileValue, 50, h);
 			ctx.fillRect(xScale(h), yScale(v), xScale(dh), yScale(dv));
 
 			// Horizontal gridlines
 			_.each(_.range(0, dv, dv/4), t => {
-				ctx.strokeStyle = d3.hcl(0, 0, tileValue+10);
+				ctx.strokeStyle = ciecam02.jch2rgb(tileValue+10, 0, 0)
 				ctx.lineWidth = 1;
 				ctx.beginPath();
 				ctx.moveTo(xScale(h), yScale(v + t));
@@ -46,7 +47,7 @@ export function drawBackplane(ctx, options) {
 
 			// Vertical gridlines
 			_.each(_.range(0, dh, dh/3), t => {
-				ctx.strokeStyle = d3.hcl(0, 0, tileValue+10);
+				ctx.strokeStyle = ciecam02.jch2rgb(tileValue+10, 0, 0)
 				ctx.lineWidth = 1;
 				ctx.beginPath();
 				ctx.moveTo(xScale(h + t), yScale(v));
