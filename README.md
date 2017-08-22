@@ -14,12 +14,12 @@ Pan and zoom into an image fluidly showing all tones and colors. You can zoom in
 
 ![Reviewing Images](/public/images/img002-review.png)
 
-## HCL Color Space
-Tap on a region to get a readout of a particular color, its HCL values and other colors with the same hue. Mark a region and you can get see where the colors are located in 3D HCL space. You can also add labels for the pigment colors you have in your palette. 
+## CIECAM02 Color Space
+Tap on a region to get a readout of a particular color, its CIECAM02 values and other colors with the same hue. Mark a region and you can get see where the colors are located in 3D CIECAM02 space. You can also add labels for the pigment colors you have in your palette. 
 
-The three digit code is a shorthand for specifying a color in HCL space. For example, a vibrant red is coded '5C9', which stands for a Tone of 5 (0=Black, 5=Midtone, 10=White), a Hue Angle of 30' (A=0', B=15', C=30', ... Y=360') and a Chroma of 9 (0=greyscale, 10=saturated). A light terracotta color is coded '7D6', which stands for a light Tone of 7, a Hue angle of 45' and a Saturation of 6.
+The three digit code is a shorthand for specifying a color in CIECAM02 space. For example, a vibrant red is coded '5C9', which stands for a Tone of 5 (0=Black, 5=Midtone, 10=White), a Hue Angle of 30' (A=0', B=15', C=30', ... Y=360') and a Chroma of 9 (0=greyscale, 10=saturated). A light terracotta color is coded '7D6', which stands for a light Tone of 7, a Hue angle of 45' and a Saturation of 6.
 
-On a Desktop Mouse 1 rotates the HCL color space, Mouse 2 pans the color space and the Mouse Wheel zooms into the color space. On a Touch device, One Finger Drag rotates the HCL color space, Three Finger drag pans the color space and Pinch zooms the color space.
+On a Desktop Mouse 1 rotates the CIECAM02 color space, Mouse 2 pans the color space and the Mouse Wheel zooms into the color space. On a Touch device, One Finger Drag rotates the CIECAM02 color space, Three Finger drag pans the color space and Pinch zooms the color space.
 
 ![Color Space](/public/images/img003-hcl.png)
 
@@ -58,4 +58,4 @@ To trace a particular edge, mask the darks or lights, uncheck Show Colors, then 
 ![Constrat](/public/images/img009-contrast.png)
 
 ## Multiple Monitors and Devices
-This application supports Multiple Monitors and Devices. You can open different views on separate browser tabs, even on different monitors and across a Desktop and a Tablet at the same time. The application communicates to each view and keeps the settings in sync. For example, you can view the 3D HCL Color Space on one monitor, the original image on another, and a black and white version on a tablet for tracing - all at the same time.
+This application supports Multiple Monitors and Devices. You can open different views on separate browser tabs, even on different monitors and across a Desktop and a Tablet at the same time. The application communicates to each view and keeps the settings in sync. For example, you can view the 3D CIECAM02 Color Space on one monitor, the original image on another, and a black and white version on a tablet for tracing - all at the same time.
