@@ -9,8 +9,11 @@ uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
 varying vec2 v_uv;
 
+// refer to https://github.com/jrus/chromatist for Javascript implementation
 float pi = 3.14159;
+vec3 D75 = vec3(94.972, 100.0, 122.638);
 vec3 D65 = vec3(95.047, 100.0, 108.883);
+vec3 D55 = vec3(95.682, 100.0,  92.149);
 vec3 D50 = vec3(96.422, 100.0,  82.521);
 
 // linear transform matrix for lms = xyz * MCAT02
