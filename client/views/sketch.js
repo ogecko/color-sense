@@ -110,16 +110,16 @@ Template.sketch.onRendered(function () {
 		store.set('rgb', rgb);
 	});
 
-	self.keyboard.simple_combo('ctrl 1', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.5; return s; }));
-	self.keyboard.simple_combo('ctrl 2', ev => store.mutate('viewSettings', s => { s.zoomLevel = 2.0; return s; }));
-	self.keyboard.simple_combo('ctrl 3', ev => store.mutate('viewSettings', s => { s.zoomLevel = 3.0; return s; }));
-	self.keyboard.simple_combo('ctrl 4', ev => store.mutate('viewSettings', s => { s.zoomLevel = 5.0; return s; }));
-	self.keyboard.simple_combo('ctrl 5', ev => store.mutate('viewSettings', s => { s.zoomLevel = 7.0; return s; }));
-	self.keyboard.simple_combo('ctrl 6', ev => store.mutate('viewSettings', s => { s.zoomLevel = 10.0; return s; }));
-	self.keyboard.simple_combo('ctrl 7', ev => store.mutate('viewSettings', s => { s.zoomLevel = 15.0; return s; }));
-	self.keyboard.simple_combo('ctrl 8', ev => store.mutate('viewSettings', s => { s.zoomLevel = 20.0; return s; }));
-	self.keyboard.simple_combo('ctrl 9', ev => store.mutate('viewSettings', s => { s.zoomLevel = 30.0; return s; }));
-	self.keyboard.simple_combo('ctrl 0', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.0; return s; }));
+	self.keyboard.simple_combo('ctrl 1', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.0; return s; }));
+	self.keyboard.simple_combo('ctrl 2', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.05; return s; }));
+	self.keyboard.simple_combo('ctrl 3', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.1; return s; }));
+	self.keyboard.simple_combo('ctrl 4', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.15; return s; }));
+	self.keyboard.simple_combo('ctrl 5', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.2; return s; }));
+	self.keyboard.simple_combo('ctrl 6', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.3; return s; }));
+	self.keyboard.simple_combo('ctrl 7', ev => store.mutate('viewSettings', s => { s.zoomLevel = 1.6; return s; }));
+	self.keyboard.simple_combo('ctrl 8', ev => store.mutate('viewSettings', s => { s.zoomLevel = 2.0; return s; }));
+	self.keyboard.simple_combo('ctrl 9', ev => store.mutate('viewSettings', s => { s.zoomLevel = 5.0; return s; }));
+	self.keyboard.simple_combo('ctrl 0', ev => store.mutate('viewSettings', s => { s.zoomLevel = 0.95; return s; }));
 	self.keyboard.simple_combo('ctrl =', ev => film.zoomIn(0.1));
 	self.keyboard.simple_combo('ctrl -', ev => film.zoomOut(0.1));
 

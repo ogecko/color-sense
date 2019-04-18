@@ -32,7 +32,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 		texture.image = image;
 		texture.needsUpdate = true;
 		uniforms.u_tex0.value = texture;
-		mesh.scale.x = 10;
+		mesh.scale.x = 11.5;	// correction for projector (should be 10)
 		mesh.scale.y = 10 * image.height / image.width;
 		renderer.render(true);
 	});
