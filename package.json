@@ -7,6 +7,7 @@
   "private": true,
   "scripts": {
     "start": "meteor run -p 3002",
+    "deploy": "mup deploy --config mup.stage.js",
     "test": "meteor test -p 3010 --driver-package=practicalmeteor:mocha",
     "testapp": "meteor test-app -p 3030 --driver-package=practicalmeteor:mocha",
     "ci-install": "meteor --version && meteor npm install --production",
