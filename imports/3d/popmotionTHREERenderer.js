@@ -191,7 +191,9 @@ class popmotionTHREERenderer extends Renderer {
 		const size = this.getWindowSize();
 		if (this.namespace.camera) this.set('camera.aspect', size.aspect);
 		this.renderer.setSize(size.width, size.height);
-		this.renderer.setPixelRatio(window.devicePixelRatio);
+		// The following line sets the CSS size of the canvas, which means the canvas width/height no longer match the pixel width/height
+		// This invalidates the tap function as it doesnt calculate the correct pixel co-ord for the tap event
+		// this.renderer.setPixelRatio(window.devicePixelRatio); 
 	}
 
 	removeScrollBars() {

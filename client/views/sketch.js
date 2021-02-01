@@ -96,17 +96,15 @@ Template.sketch.onRendered(function () {
 
 	film.touch.on('press', 		ev => console.log(getImageSliceDefn(film.camera, film.namespace.img)));
 	film.touch.on('tap', 		ev => {
+		const pos = { x: ev.srcEvent.offsetX, y: film.renderer.domElement.height - ev.srcEvent.offsetY };
 		var pixelBuffer = new Uint8Array( 4 );
 
 		const gl = film.renderer.context;
-		gl.readPixels(
-			ev.srcEvent.offsetX, film.renderer.domElement.height - ev.srcEvent.offsetY,
-			1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer
-		);
+		gl.readPixels(pos.x, pos.y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixelBuffer);
 		const vhc = rgb_to_vhc(pixelBuffer[0], pixelBuffer[1], pixelBuffer[2]);
 		const rgb = d3c.rgb(pixelBuffer[0], pixelBuffer[1], pixelBuffer[2]);
 		const hcl = d3c.hcl(rgb);
-		console.log(rgb, hcl, vhc);
+		console.log(pos, rgb, hcl, vhc);
 		store.set('rgb', rgb);
 	});
 
