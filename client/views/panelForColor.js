@@ -8,6 +8,8 @@ import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { shortColorCode } from '/imports/color/shortColorCode.js';
 import { ciecam02 } from '/imports/color/ciecam02.js';
 import { store } from '/imports/store/index.js';
+import { srgb_to_xyz, xyz_to_JuMuHu } from 'color-cam16/dist/index.js';
+
 
 d3s.selection.prototype.moveToFront = function() {  
       return this.each(function(){
@@ -19,6 +21,12 @@ Template.panelForColor.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
 });
+
+function rgb_to_JuMuHu(rgb) {
+	const xyz = srgb_to_xyz([rgb.r/255,rgb.g/255,rgb.b/255]);
+	const JuMuHu = xyz_to_JuMuHu(xyz);
+	return JuMuHu;
+}
 
 function tileValues(rgb) {
 	const result = [];
@@ -148,15 +156,15 @@ Template.panelForColor.helpers({
 	},
 	hue: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).h).format('0');
+		if (doc.isReady)  return numeral(rgb_to_JuMuHu(doc).Hu).format('0');
 	},
 	value: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).J).format('0');
+		if (doc.isReady)  return numeral(rgb_to_JuMuHu(doc).Ju).format('0');
 	},
 	chroma: function () {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return numeral(ciecam02.rgb2jch(doc.r, doc.g, doc.b).C).format('0');
+		if (doc.isReady)  return numeral(rgb_to_JuMuHu(doc).Mu*2).format('0');
 	},
 	threshold: function () {
 		const doc = store.get('threshold');
