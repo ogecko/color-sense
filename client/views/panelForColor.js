@@ -2,12 +2,7 @@ import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import numeral from 'numeral';
 import * as d3s from 'd3-selection';
-import * as d3t from 'd3-transition';
-import * as d3c from 'd3-color';
 import * as d3sc from 'd3-scale';
-import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
-import { shortColorCode } from '/imports/color/shortColorCode.js';
-import { ciecam02 } from '/imports/color/ciecam02.js';
 import { store } from '/imports/store/index.js';
 import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label } from 'color-cam16/dist/index.js';
 
@@ -137,7 +132,7 @@ Template.panelForColor.onRendered(function () {
 Template.panelForColor.helpers({
 	colorCode: function() {
 		const doc = store.get('rgb');
-		if (doc.isReady)  return shortColorCode(doc.r, doc.g, doc.b);
+		if (doc.isReady)  return rgb_to_label(doc);
 	},
 	hue: function () {
 		const doc = store.get('rgb');
