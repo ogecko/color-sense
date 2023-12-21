@@ -18,6 +18,7 @@ module.exports = {
     },
     buildOptions: {
       serverOnly: true,
+      debug: true,
     },
     env: {
       PORT: 3020,

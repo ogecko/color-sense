@@ -19,8 +19,8 @@
   "dependencies": {
     "babel-runtime": "6.18.0",
     "chromatist": "^0.1.0",
-    "color-cam16": "0.0.7",
-    "d3-color": "^1.4.1",
+    "color-cam16": "0.0.9",
+    "d3-color": "^1.0.2",
     "d3-scale": "^1.0.5",
     "d3-selection": "^1.0.4",
     "d3-shape": "^1.0.6",
@@ -31,7 +31,7 @@
     "moment": "^2.29.4",
     "numeral": "^2.0.4",
     "popmotion": "^6.3.3",
-    "three": "^0.125.0"
+    "three": "^0.84.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.1"
