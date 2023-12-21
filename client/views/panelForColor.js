@@ -4,11 +4,12 @@ import numeral from 'numeral';
 import * as d3s from 'd3-selection';
 import * as d3t from 'd3-transition';
 import * as d3c from 'd3-color';
+import * as d3sc from 'd3-scale';
 import { maxChromaHcl, isRGBok } from '/imports/color/hcl.js';
 import { shortColorCode } from '/imports/color/shortColorCode.js';
 import { ciecam02 } from '/imports/color/ciecam02.js';
 import { store } from '/imports/store/index.js';
-import { srgb_to_xyz, xyz_to_JuMuHu } from 'color-cam16/dist/index.js';
+import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label } from 'color-cam16/dist/index.js';
 
 
 d3s.selection.prototype.moveToFront = function() {  
@@ -22,34 +23,34 @@ Template.panelForColor.onCreated(function() {
 	store.subscribe(self);
 });
 
+function hex_to_rgb(hex) {
+	const rgb = hex_to_srgb(hex)
+	return { r: rgb[0]*255, g: rgb[1]*255, b: rgb[2]*255 }
+}
+
 function rgb_to_JuMuHu(rgb) {
 	const xyz = srgb_to_xyz([rgb.r/255,rgb.g/255,rgb.b/255]);
 	const JuMuHu = xyz_to_JuMuHu(xyz);
 	return JuMuHu;
 }
 
-function tileValues(rgb) {
-	const result = [];
-	const jch = ciecam02.rgb2jch(rgb.r, rgb.g, rgb.b);
-	const rgb2 = rgb;
-	result.push({ x: 0, y: 0, scale: 13.5, jch, rgb, rgb2 });
-	// _.range(0, 24, 2).forEach(h => {
-	// 	const hue = hcl.h + (h - 5) * 360 / 24;
-	// 	const max = maxChromaHcl(hue);
-	// 	const hcl2 = d3c.hcl(hue, max.c, max.l);
-	// 	const rgb1 = d3c.rgb(hcl2);
-	// 	const rgb2 = rgb1.darker();
-	// 	result.push({ x: h / 2, y: 0, scale: 1, hcl2, rgb1, rgb2 });
-	// });
-	_.range(0, 11).forEach(v => {
-		_.range(0, 100, 10).forEach(c => {
-			const jch1 = { J: v * 10, C: c, h: jch.h };
-			const rgb1 = ciecam02.jch2rgb(jch1.J, jch1.C, jch1.h);
-			const rgb2 = rgb1;
-			if (isRGBok(rgb1)) result.push({ x: 1+c/10, y: 10.5-v, scale: 1, jch1, rgb1, rgb2 });
-		});
-	});
-	return result;
+function rgb_to_label(rgb, bHueOnly=false) {
+	const JuMuHu = rgb_to_JuMuHu(rgb);
+	if (bHueOnly) { JuMuHu.Ju=0; JuMuHu.Mu=0 }
+	const label = JuMuHu_to_label(JuMuHu)
+	return label;
+}
+
+function tileColors(rgb) {
+	const start = rgb_to_label(rgb, true);
+	const colors = parse_colors(`${start} lighter to 100 in 11 steps, stronger to 50 in 11 steps`).filter(x => x.inGamut)
+	return colors;
+}
+
+function markerColors(rgb) {
+	const start = rgb_to_label(rgb, false);
+	const colors = parse_colors(`${start} contrast by 50 in 2 steps`)
+	return colors;
 }
 
 Template.panelForColor.onRendered(function () {
@@ -60,92 +61,76 @@ Template.panelForColor.onRendered(function () {
 	const svg = d3s.select('.js-panelForColor')
 		.append('svg')
 		.attr('width', 230)
-		.attr('height', 240);
+		.attr('height', 250);
 
+	// Define LinearGradient fill style 
 	const defs = svg.append("defs");
 	const gradient = defs.append("linearGradient")
 		.attr("id", "gradient")
 		.attr("x1", "0%").attr("y1", "0%")
 		.attr("x2", "0%").attr("y2", "100%")
 		.attr("spreadMethod", "pad");
-
 	gradient.append("stop")
 		.attr("offset", "0%")
-		.attr("stop-color", "#F0F0F0");
-
+		.attr("stop-color", "#D0D0D0");
 	gradient.append("stop")
 		.attr("offset", "100%")
 		.attr("stop-color", "#303030");
 
+	// Append background with linear gradient fill
+	const bkgr = svg.append("rect")
+		.attr('class', 'bkgrtile')
+		.attr('width', '100%')
+		.attr('height', '100%')
+		.style('fill', 'url(#gradient)');
 
-	// const filter = defs.append("filter")
-	// 	.attr("id", "shadowFilter")
-	// 	.attr("x", "0").attr("y", "0")
-	// 	.attr("width", "200%").attr("height", "200%")
-
-	// filter.append("feOffset")
-	// 	.attr("result", "offOut")
-	// 	.attr("in", "SourceAlpha")
-	// 	.attr("dx", "5")
-	// 	.attr("dy", "5");
-
-	// filter.append("feGaussianBlur")
-	// 	.attr("result", "blurOut")
-	// 	.attr("in", "offOut")
-	// 	.attr("stdDeviation", "5");
-
-	// filter.append("feBlend")
-	// 	.attr("in", "SourceGraphic")
-	// 	.attr("in2", "blurOut")
-	// 	.attr("mode", "normal");
+	// Define scales for mapping Ju to y and Mu to x
+	const x = d3sc.scaleLinear().domain([0, 50]).range([size*0.25, size*11])
+	const y = d3sc.scaleLinear().domain([0, 100]).range([size*11, size*0.25])
 
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc.isReady)  {
-			console.log(doc);
-			const c0 = d3c.rgb(doc.r, doc.g, doc.b);
-			const c1 = ciecam02.rgbDeltaJ(doc.r, doc.g, doc.b, -40);
+			const [markerColor, markerText] = markerColors(doc)
 
-			d3s.selectAll('.js-colortitle').style('background-color', c0);
-			d3s.selectAll('.js-colortitle .ui.header').style('color', c1);
+			d3s.selectAll('.js-colortitle').style('background-color', markerColor.hex);
+			d3s.selectAll('.js-colortitle .ui.header').style('color', markerText.hex);
 
 			const tiles = svg.selectAll('.huetile')
-				.data(tileValues(doc));
+				.data(tileColors(doc));
 			tiles.enter()
 				.append('rect')
 				.attr('class', 'huetile')
-				.attr('rx', d => 3 / d.scale)
-				.attr('ry', d => 3 / d.scale)
+				.attr('rx', 3)
+				.attr('ry', 3)
 				.attr('width', size-2)
 				.attr('height', size-2)
-				// .style('stroke', '#fff')
-				// .style('stroke-width', '.2px')
-				.attr('transform', d => `translate(${5 * size},${0 * size})scale(0.01)`)
-				.on('click', d => store.set('rgb', d.rgb1))
+				.on('click', d => store.set('rgb', hex_to_rgb(d.hex)))
 			.merge(tiles).transition()
-				// .attr('transform', d => `translate(${d.x * size},${d.y * size})`)
-				.attr('transform', d => `translate(${d.x * size},${d.y * size})scale(${d.scale})`)
-				.style('fill', d => ((d.scale>5) ? 'url(#gradient)' : d.rgb1));
+				.attr('transform', d => `translate(${ x(d.Mu) },${ y(d.Ju) })`)
+				.style('fill', d => d.hex);
 			tiles.exit()
 				.remove();
 
 			const marker = svg.selectAll('.huemarker')
-				.data([ciecam02.rgb2jch(doc.r, doc.g, doc.b)]);
+				.data([markerColor]);
 			marker.enter()
-				.append('circle')
+				.append('rect')
 				.attr('class', 'huemarker')
-				.attr('r', size/2 + 5)
-				.style('stroke', '#fff')
-				.style('stroke-width', '.5px')
+				.attr('rx', 10)
+				.attr('ry', 10)
+				.attr('width', size+2)
+				.attr('height', size+2)
+				.style('stroke-width', '3px')
 			.merge(marker).transition()
-				.attr('transform', d => `translate(${(d.C + 15) / 10 * size - 1},${(110 - d.J) / 10 * size - 1})`)
-				.style('fill', d => d3c.rgb(doc.r, doc.g, doc.b));
+				.style('stroke', markerText.hex)
+				.attr('transform', d => `translate(${ x(d.Mu) },${ y(d.Ju) })`)
+				.style('fill', d => d.hex);
 			marker.moveToFront();
 
-
 		}
-
 	});
+
 });
 
 
