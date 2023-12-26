@@ -4,6 +4,8 @@ import * as d3scale from 'd3-scale';
 import * as d3shape from 'd3-shape';
 import * as d3color from 'd3-color';
 import { ciecam02 } from '/imports/color/ciecam02.js';
+import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label, JuMuHu_to_color } from 'color-cam16/dist/index.js';
+
 
 const d3 = { ...d3scale, ...d3color, ...d3shape };
 
@@ -21,7 +23,7 @@ export function drawBackplane(ctx, options) {
 	const xScale = d3.scaleLinear().domain([0, 360]).range([0, ctx.canvas.width]);
 	const yScale = d3.scaleLinear().domain([0, 100]).range([0, ctx.canvas.height]);
 
-	const nh = 24;
+	const nh = 26*2;
 	const nv = 10;
 	const dh = 360 / nh;
 	const dv = 100 / nv;
@@ -29,10 +31,13 @@ export function drawBackplane(ctx, options) {
 		_.each(_.range(-5, 100, dv), v => {
 
 			// Fill each tile
-			const dvh = (h / dh) % 2;
-			const dvv = ((dv + v) / dv) % 2;
-			const tileValue = 52 + (dvh ^ dvv) * 4;
-			ctx.fillStyle = ciecam02.jch2rgb(tileValue, 50, h);
+			const dvv = ((dv/2 + v) / dv) % 2;
+			const dvh = ((dh/2 + h) / dh) % 2;
+			const tileValue = 52 + (dvh ^ dvv) * 5;
+			const c = JuMuHu_to_color({ Ju: tileValue, Mu: 40, Hu: h })
+	
+			ctx.fillStyle = c.hex;
+			// ctx.fillStyle = ciecam02.jch2rgb(tileValue, 50, h);
 			ctx.fillRect(xScale(h), yScale(v), xScale(dh), yScale(dv));
 
 			// Horizontal gridlines
@@ -55,12 +60,17 @@ export function drawBackplane(ctx, options) {
 				ctx.stroke();
 			});
 
+			if (v >= 100-dv) {
+				// Hue scale (Alphabetic)
+				ctx.fillStyle = props.textColor;
+				ctx.fillText(c.hexLabel1.substr(1,1), xScale(h + dh / 2), yScale(dv / 4));
+				ctx.fillText(c.hexLabel1.substr(1,1), xScale(h + dh / 2), yScale(100 - dv / 4));
+			}
+
 		});
 
-		// Hue scale (Alphabetic)
-		ctx.fillStyle = props.textColor;
-		ctx.fillText(String.fromCharCode(65 + (h / dh)), xScale(h + dh / 2), yScale(dv / 4));
-		ctx.fillText(String.fromCharCode(65 + (h / dh)), xScale(h + dh / 2), yScale(100 - dv / 4));
+		// ctx.fillStyle = props.textColor;
+		// ctx.fillText(String.fromCharCode(65 + (h / dh)), xScale(h + dh / 2), yScale(100 - dv / 4));
 	});
 
 	// Value scale (Numeric)
