@@ -4,7 +4,8 @@ import numeral from 'numeral';
 import * as d3s from 'd3-selection';
 import * as d3sc from 'd3-scale';
 import { store } from '/imports/store/index.js';
-import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label } from 'color-cam16/dist/index.js';
+import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label, JuMuHu_to_color } from 'color-cam16/dist/index.js';
+import { colorNames } from 'color-cam16/dist/color-names';
 
 
 d3s.selection.prototype.moveToFront = function() {  
@@ -42,6 +43,13 @@ function tileColors(rgb) {
 	return colors;
 }
 
+function rainbowColors(rgb) {
+	const JuMuHu = rgb_to_JuMuHu(rgb)
+	const colors = parse_colors(`rainbow in 52 steps`)
+		.map(x => ({ ...x, newhex: JuMuHu_to_color({Ju: JuMuHu.Ju, Mu: JuMuHu.Mu, Hu: x.Hu}).hex }))
+	return colors;
+}
+
 function markerColors(rgb) {
 	const start = rgb_to_label(rgb, false);
 	const colors = parse_colors(`${start} contrast by 50 in 2 steps`)
@@ -56,7 +64,7 @@ Template.panelForColor.onRendered(function () {
 	const svg = d3s.select('.js-panelForColor')
 		.append('svg')
 		.attr('width', 230)
-		.attr('height', 250);
+		.attr('height', 280);
 
 	// Define LinearGradient fill style 
 	const defs = svg.append("defs");
@@ -87,6 +95,8 @@ Template.panelForColor.onRendered(function () {
 		const doc = store.get('rgb');
 		if (doc.isReady)  {
 			const [markerColor, markerText] = markerColors(doc)
+			const JuMuHu = rgb_to_JuMuHu(doc)
+			console.log(markerColor)
 
 			d3s.selectAll('.js-colortitle').style('background-color', markerColor.hex);
 			d3s.selectAll('.js-colortitle .ui.header').style('color', markerText.hex);
@@ -123,7 +133,32 @@ Template.panelForColor.onRendered(function () {
 				.style('fill', d => d.hex);
 			marker.moveToFront();
 
+			const rainbow = svg.selectAll('.rainbowtile')
+				.data(rainbowColors(doc));
+			rainbow.enter()
+				.append('rect')
+				.attr('class', 'rainbowtile')
+				.attr('rx', 3)
+				.attr('ry', 3)
+				.attr('width', size-2)
+				.attr('height', size-2)
+				.on('click', d => store.set('rgb', hex_to_rgb(d.newhex)))
+			.merge(rainbow).transition()
+				.attr('transform', d => `translate(${ ((d.Hu-JuMuHu.Hu)/6.923076923+5)*size+6 },${ 245 })`)
+				.style('fill', d => d.hex);
+			rainbow.exit()
+				.remove();
+
 		}
+
+		// Append rainbow pointer
+	const rainbowptr = svg.append("polygon")
+		.attr('points', '100,275 115,260 130,275')
+		.attr('class', 'rainbowptr')
+		.style('fill', '#e0e0e0');
+
+
+
 	});
 
 });
@@ -133,6 +168,13 @@ Template.panelForColor.helpers({
 	colorCode: function() {
 		const doc = store.get('rgb');
 		if (doc.isReady)  return rgb_to_label(doc);
+	},
+	colorName: function() {
+		const doc = store.get('rgb');
+		if (doc.isReady)  {
+			const label=rgb_to_label(doc);
+			return colorNames[label] || 'Unknown';
+		}
 	},
 	hue: function () {
 		const doc = store.get('rgb');
