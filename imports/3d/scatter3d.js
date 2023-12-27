@@ -1,6 +1,11 @@
 import THREE from 'three';
-import { VHC, maxChroma, rgb_to_vhc, vhc_to_rgb, wrapFromTo, dsp3 } from '/imports/color/vhc.js';
-import { ciecam02 } from '/imports/color/ciecam02.js';
+import { srgb_to_xyz, xyz_to_JuMuHu } from 'color-cam16/dist/index.js';
+
+function rgb_to_JuMuHu(rgb) {
+	const xyz = srgb_to_xyz([rgb.r/255,rgb.g/255,rgb.b/255]);
+	const JuMuHu = xyz_to_JuMuHu(xyz);
+	return JuMuHu;
+}
 
 const ditherHue = () => Math.random() * 1.41;		// 360/255
 const ditherValue = () => Math.random() * 0.39;		// 100/255
@@ -51,11 +56,10 @@ class Scatter3d {
 			colors.setY(i, g / 255);
 			colors.setZ(i, b / 255);
 			// set position of vertex
-			const jch = ciecam02.rgb2jch(r, g, b);
-
-			positions.setX(i, this.xScale(jch.h));
-			positions.setY(i, this.yScale(jch.J));
-			positions.setZ(i, this.zScale(jch.C));
+			const JuMuHu = rgb_to_JuMuHu({ r, g, b })
+			positions.setX(i, this.xScale(JuMuHu.Hu));
+			positions.setY(i, this.yScale(JuMuHu.Ju));
+			positions.setZ(i, this.zScale(JuMuHu.Mu));
 		}
 		colors.updateRange = { offset: 0, count };
 		colors.needsUpdate = true;
@@ -77,10 +81,11 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			const jch = ciecam02.rgb2jch(pixels.getX(i), pixels.getY(i), pixels.getZ(i));
-			positions.setX(i, this.xScale(jch.h+ditherHue()));
-			positions.setY(i, this.yScale(jch.J+ditherValue()));
-			positions.setZ(i, this.zScale(jch.C+ditherValue()));
+			const rgb = { r: pixels.getX(i), g: pixels.getY(i), b: pixels.getZ(i) }
+			const JuMuHu = rgb_to_JuMuHu(rgb)
+			positions.setX(i, this.xScale(JuMuHu.Hu+ditherHue()));
+			positions.setY(i, this.yScale(JuMuHu.Ju+ditherValue()));
+			positions.setZ(i, this.zScale(JuMuHu.Mu+ditherValue()));
 		}
 		colors.updateRange = { offset: 0, count };
 		colors.needsUpdate = true;
@@ -104,10 +109,11 @@ class Scatter3d {
 			colors.setY(i, pixels.getY(i) / 255);
 			colors.setZ(i, pixels.getZ(i) / 255);
 			// set position of vertex
-			const jch = ciecam02.rgb2jch(pixels.getX(i), pixels.getY(i), pixels.getZ(i));
+			const rgb = { r: pixels.getX(i), g: pixels.getY(i), b: pixels.getZ(i) }
+			const JuMuHu = rgb_to_JuMuHu(rgb)
 			positions.setX(i, (i%width - width/2)/30);
 			positions.setY(i, (Math.round(i/width)-width/2)/30);
-			positions.setZ(i, this.zScale(jch.J));
+			positions.setZ(i, this.zScale(JuMuHu.Ju));
 
 		}
 		colors.updateRange = { offset: 0, count };

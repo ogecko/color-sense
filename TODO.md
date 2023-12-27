@@ -3,7 +3,8 @@
 * Watercolor painting workflow (1. Whites, 2. Lights, 3. Darks, 4. Blacks)
 * Thumbnail Value Study
 * Outline sketching
+* Hue pallete rainbow, intertial drag to new hue
 
 # Backlog of Defects
-* Migration to cam16 (scatter shader, sketch shader)
+* Migration to cam16 (sketch shader)
 * Fix scrolling re-enable after sketch
