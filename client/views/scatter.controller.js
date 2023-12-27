@@ -15,12 +15,19 @@ import { createLabelSprite } from '/imports/3d/drawLabel.js';
 import { createBackplaneMaterials } from '/imports/3d/drawBackplane.js';
 import { lerpObject } from '/imports/color/hcl.js';
 import { store } from '/imports/store/index.js';
-import { ciecam02 } from '/imports/color/ciecam02.js';
+import { srgb_to_xyz, xyz_to_JuMuHu } from 'color-cam16/dist/index.js';
 
 
 const d3 = { ...d3scale, ...d3color, ...d3shape };
-let oldJch = undefined;
-let newJch = undefined;
+let oldJuMuHu = undefined;
+let newJuMuHu = undefined;
+
+function rgb_to_JuMuHu(rgb) {
+	const xyz = srgb_to_xyz([rgb.r/255,rgb.g/255,rgb.b/255]);
+	const JuMuHu = xyz_to_JuMuHu(xyz);
+	return JuMuHu;
+}
+
 
 Template.scatter.onCreated(function() {
 	const self = this;
@@ -29,7 +36,7 @@ Template.scatter.onCreated(function() {
 
 const xScale = d3.scaleLinear().domain([0, 360]).range([-10, 10]);
 const yScale = d3.scaleLinear().domain([0, 100]).range([-5, 5]);
-const zScale = d3.scaleLinear().domain([0, 100]).range([0, 10]);
+const zScale = d3.scaleLinear().domain([0, 50]).range([0, 10]);
 
 Template.scatter.onRendered(function () {
 	const self = this;
@@ -74,12 +81,12 @@ Template.scatter.onRendered(function () {
 	cylinder.rotateX(Math.PI / 2);
 	cylinder.scale.y = zScale(0.001);
 	film.scene.add(cylinder);
-	function setCylinder(jch) {
-		film.set('huePlateGroup.x', xScale(jch.h));
-		film.set('cylinder.x', xScale(jch.h));
-		film.set('cylinder.y', yScale(jch.J));
-		film.set('cylinder.scaleY', zScale(jch.C + 0.00001));
-		film.set('cylinder.z', zScale(jch.C / 2));
+	function setCylinderJuMuHu(JuMuHu) {
+		film.set('huePlateGroup.x', xScale(JuMuHu.Hu));
+		film.set('cylinder.x', xScale(JuMuHu.Hu));
+		film.set('cylinder.y', yScale(JuMuHu.Ju));
+		film.set('cylinder.scaleY', zScale(JuMuHu.Mu + 0.00001));   // height of cylinder
+		film.set('cylinder.z', zScale(JuMuHu.Mu/2));	            // z centerpoint half way up cylinder
 	}
 
 	// Add the scatter points
@@ -105,8 +112,8 @@ Template.scatter.onRendered(function () {
 
 	// Add the Labels
 	_.each(labels, d => {
-		const jch = ciecam02.rgb2jch(d.r, d.g, d.b);
-		const pos = new THREE.Vector3(xScale(jch.h), yScale(jch.J), zScale(jch.C));
+		const JuMuHu = rgb_to_JuMuHu(d);
+		const pos = new THREE.Vector3(xScale(JuMuHu.Hu), yScale(JuMuHu.Ju), zScale(JuMuHu.Mu));
 		const label = createLabelSprite({ text: d.text });
 		label.position.copy(pos);
 		film.scene.add(label);
@@ -152,13 +159,13 @@ Template.scatter.onRendered(function () {
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc.isReady) {
-			oldJch = _.clone(newJch);
-			newJch = ciecam02.rgb2jch(doc.r, doc.g, doc.b);
-			if (!oldJch) {
-				setCylinder(newJch);
+			oldJuMuHu = _.clone(newJuMuHu);
+			newJuMuHu = rgb_to_JuMuHu(doc)
+			if (!oldJuMuHu) {
+				setCylinderJuMuHu(newJuMuHu);
 			} else {
 				tween({ ease: easing.easeInOut, duration: 500 })
-					.output(t => setCylinder(lerpObject(t, oldJch, newJch)))
+					.output(t => setCylinderJuMuHu(lerpObject(t, oldJuMuHu, newJuMuHu)))
 					.start();
 			}
 		}
