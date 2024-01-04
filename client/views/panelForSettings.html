@@ -1,46 +1,104 @@
 <template name="panelForSettings">
 	<div class="ui container segment">
 		<div class="ui threshold form">
-			<h2 class="ui header">Thresholds</h2>
             <div class="field">
-                <label>Number of Tones</label>
+                <h3 class="ui  header">Value Leveling</h3>
                 <div class="ui fluid icon buttons">
                     <div class="ui button js-onLevelDec"><i class="chevron left icon"></i></div>
                     <div class="ui button js-onLevelMid">{{numLevels}} Levels</div>
                     <div class="ui button js-onLevelInc"><i class="chevron right icon"></i></div>
                 </div>
             </div>
-            <div class="field">
-                {{#if isLevels}}
-                    <label>Tone Opacity</label>
-                    <div class="ui fluid mini icon buttons">
-                        {{#each level in opacities}}
-                            <div class="ui {{isOpacity level}} button js-onOpacity" data-level={{level}}>{{level}}%</div>
-                        {{/each}}
-                    </div>
-                    <label>Mask Tones</label>
-                    <div class="ui fluid mini icon buttons">
-                        {{#each level in levels}}
-                            <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
-                        {{/each}}
-                    </div>
-                {{/if}}
-            </div>
 
-            <div class="grouped fields">
+
+            {{#if isLevels}}
+                <div class="grouped fields">
+                    <div class="ui top attached tabular menu">
+                        {{#each level in levels}}
+                        <div class="{{isActiveLevel level}} item">{{level}}</div>
+                        {{/each}}
+                    </div>
+                    <div class="ui bottom attached active tab segment">
+                        <div class="ui labeled button" tabindex="0">
+                            <div class="ui basic label" style="width: 150px">Maxiumum Range</div>
+                            <div class="ui icon button"><i class="minus icon"></i></div>
+                            <div class="ui basic label" style="width: 60px">24</div>
+                            <div class="ui icon button"><i class="plus icon"></i></div>
+                        </div>
+                        <div class="ui labeled button" tabindex="0">
+                            <div class="ui basic label" style="width: 150px">Output Tone</div>
+                            <div class="ui icon button"><i class="minus icon"></i></div>
+                            <div class="ui basic label" style="width: 60px">100</div>
+                            <div class="ui icon button"><i class="plus icon"></i></div>
+                        </div>
+                        <div class="ui labeled button" tabindex="0">
+                            <div class="ui basic label" style="width: 150px">Mininum Range</div>
+                            <div class="ui icon button"><i class="minus icon"></i></div>
+                            <div class="ui basic label" style="width: 60px">24</div>
+                            <div class="ui icon button"><i class="plus icon"></i></div>
+                        </div>
+                        <div class="field ui toggle checkbox js-maskTone">
+                            <input type="checkbox" name="MaskTone" {{isShowSoftEdges}} tabindex="2" class="hidden">
+                            <label>Mask Level Upwards</label>
+                        </div>
+                    </div>
+                </div>
+            <div class="field">
+                <label>Value Leveling Opacity</label>
+                <div class="ui fluid mini icon buttons">
+                    {{#each level in opacities}}
+                        <div class="ui {{isOpacity level}} button js-onOpacity" data-level={{level}}>{{level}}%</div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+
+                    
+            <h3 class="ui dividing header">Chroma and Hue Settings</h3>
+            <div class="field">
                 <div class="field ui toggle checkbox js-showColors">
                     <input type="checkbox" name="showColors" {{isShowColors}} tabindex="1" class="hidden">
                     <label>Show Colors</label>
                 </div>
+            </div>
+            <div class="field">
                 <div class="field ui toggle checkbox js-maxContrast">
                     <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
                     <label>Max Chroma</label>
                 </div>
+            </div>
+            <div class="field">
+                <div class="field ui toggle checkbox js-hueLeveling">
+                    <input type="checkbox" name="hueLeveling" {{isHueLeveling}} tabindex="3" class="hidden">
+                    <label>Hue Quantizing</label>
+                </div>
+            </div>
+
+            <h3 class="ui dividing header">Outline Settings</h3>
+            <div class="field">
+                <div class="field ui toggle checkbox js-showOutline">
+                    <input type="checkbox" name="showOutline" {{isShowOutline}} tabindex="3" class="hidden">
+                    <label>Show Outline</label>
+                </div>
+            </div>
+
+{{!-- 
+            <div class="field">
                 <div class="field ui toggle checkbox js-showSoftEdges">
                     <input type="checkbox" name="showSoftEdges" {{isShowSoftEdges}} tabindex="2" class="hidden">
                     <label>Show Soft Edges</label>
                 </div>
             </div>
+
+
+            <label>Mask Tones</label>
+            <div class="ui fluid mini icon buttons">
+                {{#each level in levels}}
+                    <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
+                {{/each}}
+            </div>
+ --}}
 
 		</div>
 	</div>

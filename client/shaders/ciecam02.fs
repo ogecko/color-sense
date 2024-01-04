@@ -8,7 +8,7 @@ uniform float u_showEdges;
 uniform float u_maxContrast;
 uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
-uniform int u_numNodes;
+uniform int u_numLevels;
 uniform float u_nodes[100];
 varying vec2 v_uv;
 
@@ -292,9 +292,10 @@ void main( void ) {
 	// float hx = 360.0 / 3.0;
 	// jch.z = floor(jch.z/hx)*hx;
 
-	const int numNodes = 9;
+	int limit = u_numLevels * 2;
 	float t = (100.0 - u_opacity) / 100.0;
-	for (int i = 2; i < numNodes; i += 2) {
+	for (int i = 2; i < 19; i += 2) {
+		if (i > limit) break;																		// workaround as for check cannot use uniforms
 		jch.x = flatten(jch.x, u_nodes[i-2], u_nodes[i-1], u_nodes[i], t);
 	}
 

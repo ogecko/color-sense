@@ -20,9 +20,9 @@ export const setSelectors = {
   u_showColors: (element, value) => element.material.uniforms.u_showColors.value = value,
   u_showEdges: (element, value) => element.material.uniforms.u_showEdges.value = value,
   u_maxContrast: (element, value) => element.material.uniforms.u_maxContrast.value = value,
-  u_numNodes: (element, value) => element.material.uniforms.u_numNodes.value = value,
-  u_opacity: (element, value) => element.material.uniforms.u_opacity.value = value,
+  u_numLevels: (element, value) => element.material.uniforms.u_numLevels.value = value,
   u_nodes: (element, value) => element.material.uniforms.u_nodes.value = value,
+  u_opacity: (element, value) => element.material.uniforms.u_opacity.value = value,
   u_resolution: (element, value) => element.material.uniforms.u_resolution.value = value,
   u_mouse: (element, value) => element.material.uniforms.u_mouse.value = value,
   u_flag01: (element, value) => element.material.uniforms.u_flag01.value = value,
@@ -59,9 +59,9 @@ export const getSelectors = {
   u_showColors: element => element.material.uniforms.u_showColors.value,
   u_showEdges: element => element.material.uniforms.u_showEdges.value,
   u_maxContrast: element => element.material.uniforms.u_maxContrast.value,
-  u_numNodes: element => element.material.uniforms.u_numNodes.value,
-  u_opacity: element => element.material.uniforms.u_opacity.value,
+  u_numLevels: element => element.material.uniforms.u_numLevels.value,
   u_nodes: element => element.material.uniforms.u_nodes.value,
+  u_opacity: element => element.material.uniforms.u_opacity.value,
   render: element => element.render,
 };
 

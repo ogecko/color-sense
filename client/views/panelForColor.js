@@ -104,13 +104,6 @@ Template.panelForColor.onRendered(function () {
 	const x = d3sc.scaleLinear().domain([0, 50]).range([width-11*size + size*0.25, width-size*0.25])
 	const y = d3sc.scaleLinear().domain([0, 100]).range([size*11, size])
 
-	// const doc = {
-	// 	nodes:  [0, 0, 5, 20, 50, 80, 95, 100, 100],
-	// 	numNodes: 9,
-	// 	idxSelected: undefined
-	// }
-	// store.set('nodes', doc)
-
 	self.autorun(function() {
 		const doc = store.get('rgb');
 		if (doc.isReady)  {
@@ -180,8 +173,9 @@ Template.panelForColor.onRendered(function () {
 	});
 
 	self.autorun(function() {
-		const doc = store.get('nodes');
+		const doc = store.get('thresholdSettings');
 		if (doc.isReady)  {
+			if (!doc.nodes) doc.nodes = [0,0,10,25,50,75,85,100,100];
 			const nodes = doc.nodes.map((d,i)=>({ 
 				i:i, 
 				Ju: d,  
@@ -207,11 +201,13 @@ Template.panelForColor.onRendered(function () {
 				.attr("class", "treetxt")
 				.attr("alignment-baseline","middle")
 				.attr("text-anchor","middle")
-				.on('click', d => store.mutate('nodes', doc => {doc.idxSelected = self.idxSelected = d.i; return doc}))
+				.on('click', d => store.mutate('thresholdSettings', doc => {doc.idxSelected = self.idxSelected = d.i; return doc}))
 			.merge(treetxt).transition()
 				.style("fill", d => (d.isSelected ? "red" : "black" ))
 				.attr("x", d => d.x).attr("y", d => d.y)
 				.text(d => d.Ju)
+			treetxt.exit()
+				.remove();
 
 			const treelines = svg.selectAll('.treelines')
 				.data(nodes);
@@ -222,16 +218,27 @@ Template.panelForColor.onRendered(function () {
 				.attr("stroke","black")
 				.style("stroke-width", '.5px')
 			.merge(treelines).transition()
-				.attr("points", d => (d.isTarget ? `${nodes[d.i-1].x-15},${nodes[d.i-1].y} ${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${nodes[d.i+1].x-15},${nodes[d.i+1].y} `
+				.attr("points", d => (d.isTarget ? `${nodes[d.i-1].x-15},${nodes[d.i-1].y} ${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${nodes[d.i+1].x-15},${nodes[d.i+1].y} ${nodes[d.i+0].x+30},${nodes[d.i+0].y} ${nodes[d.i-1].x-15},${nodes[d.i-1].y} `
 												 : `${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${x(0)},${y(d.Ju)+size/2} `))
-
+				.attr("fill", d => (d.isTarget ? "grey" : "none"))
+			treelines.exit()
+				.remove();
+								 
 		}
 			
 	});
 
 	
-	self.keyboard.simple_combo(']', ev => store.mutate('nodes', s => { s.nodes[self.idxSelected]++; return s; }));
-	self.keyboard.simple_combo('[', ev => store.mutate('nodes', s => { s.nodes[self.idxSelected]--; return s; }));
+	self.keyboard.simple_combo(']', ev => store.mutate('thresholdSettings', s => { 
+		const i = self.idxSelected;
+		if (s.nodes[i]<100) s.nodes[i]++
+		return s; 
+	}));
+	self.keyboard.simple_combo('[', ev => store.mutate('thresholdSettings', s => { 
+		const i = self.idxSelected;
+		if (s.nodes[i]>0) s.nodes[i]--
+		return s; 
+	}));
 
 
 });
