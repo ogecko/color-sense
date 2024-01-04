@@ -1,5 +1,6 @@
 uniform float u_time;
 uniform float u_numEdges;
+uniform float u_opacity;
 uniform float u_maskDark;
 uniform float u_maskLight;
 uniform float u_showColors;
@@ -7,6 +8,8 @@ uniform float u_showEdges;
 uniform float u_maxContrast;
 uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
+uniform int u_numNodes;
+uniform float u_nodes[100];
 varying vec2 v_uv;
 
 // refer to https://github.com/jrus/chromatist for Javascript implementation
@@ -263,25 +266,37 @@ bool in_gamut_sRGB(vec4 rgb) {
 	return (in_gamut(rgb.x) && in_gamut(rgb.y) && in_gamut(rgb.z));
 }
 
+float flatten(float xsrc, float xmin, float xtgt, float xmax,  float t) {
+		
+	float a = t * step(xmin, xsrc) * step(xsrc, xmax);
+	return mix(xsrc, xtgt, a);
+}
+
 void main( void ) {
 	vec4 jch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
 
-	if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
-		float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
-		float lx = max(jch.x, dx * u_maskDark / 10.0);				// clamp out n dark bands eg 0 = show all, 10 = no blacks, 20=no blacks or darks
-		float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out n light bands eg 0 = show all, 10 = no whites, 20=no whites or lights
-		float bv = (ly + dx / 2.0) / dx;		// calculate where lightness falls into the bands
-		float b = floor(bv);					// band number 0,1,2,..n where n=#edges eg 2 edges n = 0:black,1:midtone,2:white
-		float c = fract(bv) * 100.0;			// how far into band 0 to 100%
-		jch.x = b * dx;																				// quantise the lightness
-		jch.x = jch.x - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// optionally add shoft edges
-		float lowest = 0.0 + u_maskDark/10.0*dx*u_maxContrast/100.0;
-		float highest = 100.0 - u_maskLight/10.0*dx*u_maxContrast/100.0;
-		jch.x = (jch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
-	}
+	// if (u_numEdges > 9.0) {					// u_numEdges 0 = no edges, 10 = 1 edge, 20 = 2 edges, 30 = 3 edges, etc.
+	// 	float dx = 1000.0 / (u_numEdges);		// dx is width of grey bands 100 for 1 edge, 50 for 2 edges, 33 for 3 edges, 25 for 4 edges, etc
+	// 	float lx = max(jch.x, dx * u_maskDark / 10.0);				// clamp out n dark bands eg 0 = show all, 10 = no blacks, 20=no blacks or darks
+	// 	float ly = min(lx, 100.0 - dx * u_maskLight / 10.0);		// clamp out n light bands eg 0 = show all, 10 = no whites, 20=no whites or lights
+	// 	float bv = (ly + dx / 2.0) / dx;		// calculate where lightness falls into the bands
+	// 	float b = floor(bv);					// band number 0,1,2,..n where n=#edges eg 2 edges n = 0:black,1:midtone,2:white
+	// 	float c = fract(bv) * 100.0;			// how far into band 0 to 100%
+	// 	jch.x = b * dx;																				// quantise the lightness
+	// 	jch.x = jch.x - step(c, u_showEdges)*hatch()*dx + step(100.0 - u_showEdges, c)*hatch()*dx;	// optionally add shoft edges
+	// 	float lowest = 0.0 + u_maskDark/10.0*dx*u_maxContrast/100.0;
+	// 	float highest = 100.0 - u_maskLight/10.0*dx*u_maxContrast/100.0;
+	// 	jch.x = (jch.x - lowest)/(highest-lowest)*100.0;											// optionally max the contrast	
+	// }
 
 	// float hx = 360.0 / 3.0;
 	// jch.z = floor(jch.z/hx)*hx;
+
+	const int numNodes = 9;
+	float t = (100.0 - u_opacity) / 100.0;
+	for (int i = 2; i < numNodes; i += 2) {
+		jch.x = flatten(jch.x, u_nodes[i-2], u_nodes[i-1], u_nodes[i], t);
+	}
 
 	jch.y = jch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
 	jch.y = jch.y * u_showColors / 100.0;

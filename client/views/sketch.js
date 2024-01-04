@@ -72,11 +72,21 @@ Template.sketch.onRendered(function () {
 		if (doc.isReady) {
 			console.log('updating', doc);
 			film.uniformTo('img.u_numEdges', doc.numEdges);
+			film.uniformTo('img.u_opacity', doc.opacity);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
 			film.uniformTo('img.u_maxContrast', doc.maxContrast ? 100 : 0);
 			film.uniformTo('img.u_maskDark', doc.maskDark);
 			film.uniformTo('img.u_maskLight', doc.maskLight);
+		}
+	});
+
+	self.autorun(function() {
+		const doc = store.get('nodes');
+		if (doc.isReady) {
+			console.log('updating2', doc);
+			film.uniformSet('img.u_numNodes', doc.numNodes);
+			film.uniformSet('img.u_nodes', doc.nodes);
 		}
 	});
 

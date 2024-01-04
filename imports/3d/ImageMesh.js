@@ -24,7 +24,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 
 	// create the mesh
 	const mesh = new THREE.Mesh(geometry, material);
-	mesh.scale.x = 0.0001;	// dont show anything until loaded
+	mesh.scale.x = 0.0001;	// dont show anything until loaded 
 
 	// load the image, assign to texture, resize mesh, assign as u_tex0 for shader
 	const image = new THREE.ImageLoader().load(imagePath, function (image) {

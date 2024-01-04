@@ -17,6 +17,8 @@ Template.panelForSettings.helpers({
 	numLevels: () => { const n = store.get('thresholdSettings').numEdges / 10 + 1; return n == 1 ? 'All' : n},
 	isLevels: () => store.get('thresholdSettings').numEdges > 0,
 	levels: () => _.range(1, store.get('thresholdSettings').numEdges / 10 + 2),
+	opacities: () => _.range(0, 101, 20),
+	isOpacity: (lvl) => { const n = store.get('thresholdSettings').opacity; return n==lvl ? 'primary' : undefined},
 	isMasked: (lvl) => {
 		const settings = store.get('thresholdSettings');
 		if (lvl < settings.maskDark / 10 + 1) return 'primary';
@@ -41,6 +43,10 @@ Template.panelForSettings.events({
 	'click .js-onLevelMid': () => store.mutate('thresholdSettings', s => {
 		if (s.maskLight === 0 && s.maskDark === 0) s.numEdges = 0;
 		s.maskLight = 0; s.maskDark = 0;
+		return s;
+	}),
+	'click .js-onOpacity': (ev) => store.mutate('thresholdSettings', s => {
+		s.opacity = ev.currentTarget.dataset.level*1;	// ensure number not string
 		return s;
 	}),
 	'click .js-onMask': (ev) => store.mutate('thresholdSettings', s => {

@@ -1,8 +1,10 @@
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
+import { Keypress } from 'meteor/keypress:keypress';
 import numeral from 'numeral';
 import * as d3s from 'd3-selection';
 import * as d3sc from 'd3-scale';
+import * as d3f from 'd3-force';
 import { store } from '/imports/store/index.js';
 import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label, JuMuHu_to_color } from 'color-cam16/dist/index.js';
 import { colorNames } from 'color-cam16/dist/color-names';
@@ -17,6 +19,13 @@ d3s.selection.prototype.moveToFront = function() {
 Template.panelForColor.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
+	self.keyboard = new Keypress.Listener();	// ensure this is destroyed on template removal
+	self.idxSelected = undefined;
+});
+
+Template.sketch.onDestroyed(function() {
+	const self = this;
+	self.keyboard.destroy();
 });
 
 function hex_to_rgb(hex) {
@@ -46,7 +55,7 @@ function tileColors(rgb) {
 function rainbowColors(rgb) {
 	const JuMuHu = rgb_to_JuMuHu(rgb)
 	const colors = parse_colors(`rainbow in 52 steps`)
-		.map(x => ({ ...x, newhex: JuMuHu_to_color({Ju: JuMuHu.Ju, Mu: JuMuHu.Mu, Hu: x.Hu}).hex }))
+		.map(x => ({ ...x, newhex: JuMuHu_to_color({Ju: JuMuHu.Ju, Mu: JuMuHu.Mu>5?JuMuHu.Mu:5, Hu: x.Hu}).hex }))
 	return colors;
 }
 
@@ -56,15 +65,19 @@ function markerColors(rgb) {
 	return colors;
 }
 
+
 Template.panelForColor.onRendered(function () {
 	const self = this;
-	const container = self.$('.js-panelForColor')[0];
 	const size = 20;
+	const height = 295;
+	const width = self.$('.js-colortitle')[0].clientWidth;
+	const container = self.$('.js-panelForColor')[0];
 
 	const svg = d3s.select('.js-panelForColor')
 		.append('svg')
-		.attr('width', 230)
-		.attr('height', 280);
+		.attr('width', width)
+		.attr('height', height);
+
 
 	// Define LinearGradient fill style 
 	const defs = svg.append("defs");
@@ -88,8 +101,15 @@ Template.panelForColor.onRendered(function () {
 		.style('fill', 'url(#gradient)');
 
 	// Define scales for mapping Ju to y and Mu to x
-	const x = d3sc.scaleLinear().domain([0, 50]).range([size*0.25, size*11])
-	const y = d3sc.scaleLinear().domain([0, 100]).range([size*11, size*0.25])
+	const x = d3sc.scaleLinear().domain([0, 50]).range([width-11*size + size*0.25, width-size*0.25])
+	const y = d3sc.scaleLinear().domain([0, 100]).range([size*11, size])
+
+	// const doc = {
+	// 	nodes:  [0, 0, 5, 20, 50, 80, 95, 100, 100],
+	// 	numNodes: 9,
+	// 	idxSelected: undefined
+	// }
+	// store.set('nodes', doc)
 
 	self.autorun(function() {
 		const doc = store.get('rgb');
@@ -144,22 +164,75 @@ Template.panelForColor.onRendered(function () {
 				.attr('height', size-2)
 				.on('click', d => store.set('rgb', hex_to_rgb(d.newhex)))
 			.merge(rainbow).transition()
-				.attr('transform', d => `translate(${ ((d.Hu-JuMuHu.Hu)/6.923076923+5)*size+6 },${ 245 })`)
+				.attr('transform', d => `translate(${ ((d.Hu-JuMuHu.Hu)/6.923076923-0.4)*size+width/2 },${ height-15-size })`)
 				.style('fill', d => d.hex);
 			rainbow.exit()
 				.remove();
 
+			// Append rainbow pointer
+			const xpos = width/2
+			const rainbowptr = svg.append("polygon")
+				.attr('points', `${xpos-15},${height-5} ${xpos},${height-15} ${xpos+15},${height-5}`)
+				.attr('class', 'rainbowptr')
+				.style('fill', '#e0e0e0');
 		}
 
-		// Append rainbow pointer
-	const rainbowptr = svg.append("polygon")
-		.attr('points', '100,275 115,260 130,275')
-		.attr('class', 'rainbowptr')
-		.style('fill', '#e0e0e0');
-
-
-
 	});
+
+	self.autorun(function() {
+		const doc = store.get('nodes');
+		if (doc.isReady)  {
+			const nodes = doc.nodes.map((d,i)=>({ 
+				i:i, 
+				Ju: d,  
+				isTarget: i % 2,
+				isSelected: i==doc.idxSelected
+			}));
+
+			// layout the tree nodes
+			const simulation = d3f.forceSimulation(nodes)
+				.force("collide",d3f.forceCollide(12))
+				.force("forceX",d3f.forceX((d,i) => (d.isTarget ? 20 : x(0)-28)).strength(1))
+				.force("forceY",d3f.forceY((d) => (y(d.Ju)+size/2)).strength(0.5))
+				.stop();
+			
+			// Run the simulation to its end, then draw.
+			simulation.tick(20);
+			console.log(nodes, Shaders)
+
+			const treetxt = svg.selectAll('.treetxt')
+				.data(nodes);
+			treetxt.enter()
+				.append("text")
+				.attr("class", "treetxt")
+				.attr("alignment-baseline","middle")
+				.attr("text-anchor","middle")
+				.on('click', d => store.mutate('nodes', doc => {doc.idxSelected = self.idxSelected = d.i; return doc}))
+			.merge(treetxt).transition()
+				.style("fill", d => (d.isSelected ? "red" : "black" ))
+				.attr("x", d => d.x).attr("y", d => d.y)
+				.text(d => d.Ju)
+
+			const treelines = svg.selectAll('.treelines')
+				.data(nodes);
+			treelines.enter()
+				.append("polyline")
+				.attr("class", "treelines")
+				.attr("fill","none")
+				.attr("stroke","black")
+				.style("stroke-width", '.5px')
+			.merge(treelines).transition()
+				.attr("points", d => (d.isTarget ? `${nodes[d.i-1].x-15},${nodes[d.i-1].y} ${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${nodes[d.i+1].x-15},${nodes[d.i+1].y} `
+												 : `${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${x(0)},${y(d.Ju)+size/2} `))
+
+		}
+			
+	});
+
+	
+	self.keyboard.simple_combo(']', ev => store.mutate('nodes', s => { s.nodes[self.idxSelected]++; return s; }));
+	self.keyboard.simple_combo('[', ev => store.mutate('nodes', s => { s.nodes[self.idxSelected]--; return s; }));
+
 
 });
 
