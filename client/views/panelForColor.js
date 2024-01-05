@@ -20,7 +20,6 @@ Template.panelForColor.onCreated(function() {
 	const self = this;
 	store.subscribe(self);
 	self.keyboard = new Keypress.Listener();	// ensure this is destroyed on template removal
-	self.idxSelected = undefined;
 });
 
 Template.sketch.onDestroyed(function() {
@@ -206,7 +205,7 @@ Template.panelForColor.onRendered(function () {
 				.attr("alignment-baseline","middle")
 				.attr("text-anchor","middle")
 				.on('click', d => store.mutate('thresholdSettings', s => {
-					s.idxSelected = self.idxSelected = d.i; 
+					s.idxSelected = d.i; 
 					s.levelSelected = Math.floor(d.i / 2)+1;
 					if (s.levelSelected > s.numLevels) s.levelSelected = s.numLevels
 					return s
@@ -226,8 +225,17 @@ Template.panelForColor.onRendered(function () {
 				.attr("stroke","black")
 				.style("stroke-width", '.5px')
 			.merge(treelines).transition()
-				.attr("points", d => (d.isTarget ? `${nodes[d.i-1].x-15},${nodes[d.i-1].y} ${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${nodes[d.i+1].x-15},${nodes[d.i+1].y} ${nodes[d.i+0].x+30},${nodes[d.i+0].y} ${nodes[d.i-1].x-15},${nodes[d.i-1].y} `
-												 : `${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${x(0)},${y(d.Ju)+size/2} `))
+				.attr("points", d => (d.isTarget ? 
+						// arrow pointing to Output Tone Target
+						`${nodes[d.i-1].x-15},${nodes[d.i-1].y} 
+						${nodes[d.i+0].x+15},${nodes[d.i+0].y} 
+						${nodes[d.i+1].x-15},${nodes[d.i+1].y} 
+						${nodes[d.i+0].x+30},${nodes[d.i+0].y>nodes[d.i-1].y? nodes[d.i-1].y : nodes[d.i+0].y<nodes[d.i+1].y? nodes[d.i+1].y : nodes[d.i+0].y} 
+						${nodes[d.i-1].x-15},${nodes[d.i-1].y}`
+					: 
+						// simple line pointing to threshold Tone
+						`${nodes[d.i+0].x+15},${nodes[d.i+0].y} 
+						${x(0)},${y(d.Ju)+size/2}`))
 				.attr("fill", d => (d.isMasked ? "#2185d0" : "gray"))
 			treelines.exit()
 				.remove();
@@ -238,12 +246,12 @@ Template.panelForColor.onRendered(function () {
 
 	
 	self.keyboard.simple_combo(']', ev => store.mutate('thresholdSettings', s => { 
-		const i = self.idxSelected;
+		const i = s.idxSelected;
 		if (s.nodes[i]<100) s.nodes[i]++
 		return s; 
 	}));
 	self.keyboard.simple_combo('[', ev => store.mutate('thresholdSettings', s => { 
-		const i = self.idxSelected;
+		const i = s.idxSelected;
 		if (s.nodes[i]>0) s.nodes[i]--
 		return s; 
 	}));
