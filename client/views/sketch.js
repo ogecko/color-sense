@@ -23,6 +23,8 @@ Template.sketch.onCreated(function() {
 Template.sketch.onDestroyed(function() {
 	const self = this;
 	self.keyboard.destroy();
+	self.film.restoreScrollBars();
+
 });
 
 Template.sketch.onRendered(function () {
@@ -38,6 +40,7 @@ Template.sketch.onRendered(function () {
 
 	const container = self.$('.js-placeholder')[0];
 	const film = self.film = popmotionTHREERenderer(container);
+	film.removeScrollBars();
 
 
 	self.autorun(function() {
@@ -99,7 +102,6 @@ Template.sketch.onRendered(function () {
 		}
 	});
 
-	film.removeScrollBars();
 	film.touch.on('panstart', 	ev => noLockView && film.panToStartDrag(ev));
 	film.touch.on('pan', 		ev => noLockView && film.panToContinueDrag(ev));
 	film.touch.on('panend', 	ev => noLockView && film.panToEndWithInertia(ev));

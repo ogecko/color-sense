@@ -203,6 +203,10 @@ class popmotionTHREERenderer extends Renderer {
 		$('body').css('overflow','hidden');
 	}
 
+	restoreScrollBars() {
+		$('body').css('overflow','unset');
+	}
+
 	addTHREEObjects(obj, parent) {
 		// add THREE objects to a parent (or the scene by default)
 	}

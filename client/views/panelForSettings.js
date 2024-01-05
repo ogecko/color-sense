@@ -36,7 +36,7 @@ Template.panelForSettings.helpers({
 function defaultNodes(levels) {
 	const defaultValues = [
 		[],									 				//0			
-		[15, 50, 85],										//1
+		[40, 50, 60],										//1
 		[15, 25, 50, 75, 85],								//2
 		[0, 0, 15, 50, 85, 100, 100],						//3
 		[0, 0, 10, 25, 50, 75, 90, 100, 100],				//4
