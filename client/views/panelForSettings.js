@@ -76,6 +76,7 @@ Template.panelForSettings.events({
 			s.idxSelected = undefined;
 		}
 		s.maskLevels = [];
+		s.idxSelected = undefined;
 		return s;
 	}),
 	'click .js-onLevelTab': (ev) => store.mutate('thresholdSettings', s => {
