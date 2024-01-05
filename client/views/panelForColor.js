@@ -180,6 +180,7 @@ Template.panelForColor.onRendered(function () {
 				i:i, 
 				Ju: d,  
 				isTarget: i % 2,
+				isMasked: (i % 2) & doc.maskLevels[Math.floor(i/2)+1],
 				isSelected: i==doc.idxSelected
 			}));
 
@@ -201,7 +202,12 @@ Template.panelForColor.onRendered(function () {
 				.attr("class", "treetxt")
 				.attr("alignment-baseline","middle")
 				.attr("text-anchor","middle")
-				.on('click', d => store.mutate('thresholdSettings', doc => {doc.idxSelected = self.idxSelected = d.i; return doc}))
+				.on('click', d => store.mutate('thresholdSettings', s => {
+					s.idxSelected = self.idxSelected = d.i; 
+					s.levelSelected = Math.floor(d.i / 2)+1;
+					if (s.levelSelected > s.numLevels) s.levelSelected = s.numLevels
+					return s
+				}))
 			.merge(treetxt).transition()
 				.style("fill", d => (d.isSelected ? "red" : "black" ))
 				.attr("x", d => d.x).attr("y", d => d.y)
@@ -214,13 +220,12 @@ Template.panelForColor.onRendered(function () {
 			treelines.enter()
 				.append("polyline")
 				.attr("class", "treelines")
-				.attr("fill","none")
 				.attr("stroke","black")
 				.style("stroke-width", '.5px')
 			.merge(treelines).transition()
 				.attr("points", d => (d.isTarget ? `${nodes[d.i-1].x-15},${nodes[d.i-1].y} ${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${nodes[d.i+1].x-15},${nodes[d.i+1].y} ${nodes[d.i+0].x+30},${nodes[d.i+0].y} ${nodes[d.i-1].x-15},${nodes[d.i-1].y} `
 												 : `${nodes[d.i+0].x+15},${nodes[d.i+0].y} ${x(0)},${y(d.Ju)+size/2} `))
-				.attr("fill", d => (d.isTarget ? "grey" : "none"))
+				.attr("fill", d => (d.isMasked ? "#2185d0" : "gray"))
 			treelines.exit()
 				.remove();
 								 

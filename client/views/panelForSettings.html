@@ -4,9 +4,9 @@
             <div class="field">
                 <h3 class="ui  header">Value Leveling</h3>
                 <div class="ui fluid icon buttons">
-                    <div class="ui button js-onLevelDec"><i class="chevron left icon"></i></div>
+                    <div class="ui button js-onNumLevelsDX" data-dx= -1><i class="chevron left icon"></i></div>
                     <div class="ui button js-onLevelMid">{{numLevels}} Levels</div>
-                    <div class="ui button js-onLevelInc"><i class="chevron right icon"></i></div>
+                    <div class="ui button js-onNumLevelsDX" data-dx= +1><i class="chevron right icon"></i></div>
                 </div>
             </div>
 
@@ -15,31 +15,31 @@
                 <div class="grouped fields">
                     <div class="ui top attached tabular menu">
                         {{#each level in levels}}
-                        <div class="{{isActiveLevel level}} item">{{level}}</div>
+                        <div class="{{isActiveLevel level}} item js-onLevelTab" data-level={{level}}>{{level}}</div>
                         {{/each}}
                     </div>
                     <div class="ui bottom attached active tab segment">
                         <div class="ui labeled button" tabindex="0">
                             <div class="ui basic label" style="width: 150px">Maxiumum Range</div>
-                            <div class="ui icon button"><i class="minus icon"></i></div>
-                            <div class="ui basic label" style="width: 60px">24</div>
-                            <div class="ui icon button"><i class="plus icon"></i></div>
+                            <div class="ui icon button js-onMaxRangeDX" data-dx= -1><i class="minus icon"></i></div>
+                            <div class="ui basic label {{isActiveMaxRange}}" style="width: 60px">{{maxRange}}</div>
+                            <div class="ui icon button js-onMaxRangeDX" data-dx= +1><i class="plus icon"></i></div>
                         </div>
                         <div class="ui labeled button" tabindex="0">
                             <div class="ui basic label" style="width: 150px">Output Tone</div>
-                            <div class="ui icon button"><i class="minus icon"></i></div>
-                            <div class="ui basic label" style="width: 60px">100</div>
-                            <div class="ui icon button"><i class="plus icon"></i></div>
+                            <div class="ui icon button js-onOutputToneDX" data-dx= -1><i class="minus icon"></i></div>
+                            <div class="ui basic label {{isActiveOutputTone}}" style="width: 60px">{{outputTone}}</div>
+                            <div class="ui icon button js-onOutputToneDX" data-dx= +1><i class="plus icon"></i></div>
                         </div>
                         <div class="ui labeled button" tabindex="0">
                             <div class="ui basic label" style="width: 150px">Mininum Range</div>
-                            <div class="ui icon button"><i class="minus icon"></i></div>
-                            <div class="ui basic label" style="width: 60px">24</div>
-                            <div class="ui icon button"><i class="plus icon"></i></div>
+                            <div class="ui icon button js-onMinRangeDX" data-dx= -1><i class="minus icon"></i></div>
+                            <div class="ui basic label {{isActiveMinRange}}" style="width: 60px">{{minRange}}</div>
+                            <div class="ui icon button js-onMinRangeDX" data-dx= +1><i class="plus icon"></i></div>
                         </div>
-                        <div class="field ui toggle checkbox js-maskTone">
-                            <input type="checkbox" name="MaskTone" {{isShowSoftEdges}} tabindex="2" class="hidden">
-                            <label>Mask Level Upwards</label>
+                        <div class="field ui toggle checkbox js-maskLevel">
+                            <input type="checkbox" name="MaskLevel" {{isLevelMasked}} tabindex="2" class="hidden">
+                            <label>Mask Level</label>
                         </div>
                     </div>
                 </div>
@@ -82,23 +82,6 @@
                     <label>Show Outline</label>
                 </div>
             </div>
-
-{{!-- 
-            <div class="field">
-                <div class="field ui toggle checkbox js-showSoftEdges">
-                    <input type="checkbox" name="showSoftEdges" {{isShowSoftEdges}} tabindex="2" class="hidden">
-                    <label>Show Soft Edges</label>
-                </div>
-            </div>
-
-
-            <label>Mask Tones</label>
-            <div class="ui fluid mini icon buttons">
-                {{#each level in levels}}
-                    <div class="ui {{isMasked level}} button js-onMask" data-level={{level}}>{{level}}</div>
-                {{/each}}
-            </div>
- --}}
 
 		</div>
 	</div>

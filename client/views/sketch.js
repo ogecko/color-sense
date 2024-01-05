@@ -70,16 +70,22 @@ Template.sketch.onRendered(function () {
 	self.autorun(function() {
 		const doc = store.get('thresholdSettings');
 		if (doc.isReady || true) {						// always set the WEBGL uniforms, to defaults if necessary
-			console.log('updating', doc);
+			const nodes = _.isArray(doc.nodes) ? doc.nodes : [0, 50, 100];
+			_.each(doc.maskLevels, (isMasked, level) =>{
+				if (isMasked) {
+					maskIndex = level*2-1
+					nextIndex = (level>doc.numLevels/2) ? maskIndex - 2 : maskIndex + 2
+					nodes[maskIndex] = nodes[nextIndex]
+				}
+			})
+			console.log('updating', doc, nodes);
 			film.uniformTo('img.u_numEdges', doc.numEdges ? doc.numEdges : 0);
 			film.uniformTo('img.u_opacity', doc.opacity ? doc.opacity : 0);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
 			film.uniformTo('img.u_maxContrast', doc.maxContrast ? 100 : 0);
-			film.uniformTo('img.u_maskDark', doc.maskDark ? doc.maskDark : 0);
-			film.uniformTo('img.u_maskLight', doc.maskLight ? doc.maskLight : 0);
 			film.uniformSet('img.u_numLevels', doc.numLevels ? doc.numLevels : 0);
-			film.uniformSet('img.u_nodes', doc.nodes ? doc.nodes : [0, 50, 100]);
+			film.uniformSet('img.u_nodes', nodes);
 		}
 	});
 
