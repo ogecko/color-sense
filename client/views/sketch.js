@@ -78,7 +78,7 @@ Template.sketch.onRendered(function () {
 					nodes[maskIndex] = nodes[nextIndex]
 				}
 			})
-			console.log('updating', doc, nodes);
+			console.log('updating', doc);
 			film.uniformTo('img.u_numEdges', doc.numEdges ? doc.numEdges : 0);
 			film.uniformTo('img.u_opacity', doc.opacity ? doc.opacity : 0);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);

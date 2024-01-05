@@ -193,7 +193,6 @@ Template.panelForColor.onRendered(function () {
 			
 			// Run the simulation to its end, then draw.
 			simulation.tick(20);
-			console.log(nodes, Shaders)
 
 			const treetxt = svg.selectAll('.treetxt')
 				.data(nodes);
@@ -209,7 +208,7 @@ Template.panelForColor.onRendered(function () {
 					return s
 				}))
 			.merge(treetxt).transition()
-				.style("fill", d => (d.isSelected ? "red" : "black" ))
+				.style("fill", d => (d.isSelected ? "#2185d0" : "black" ))
 				.attr("x", d => d.x).attr("y", d => d.y)
 				.text(d => d.Ju)
 			treetxt.exit()
