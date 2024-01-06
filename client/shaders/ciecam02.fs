@@ -1,3 +1,4 @@
+varying vec2 v_uv;
 uniform float u_time;
 uniform float u_numEdges;
 uniform float u_opacity;
@@ -7,8 +8,10 @@ uniform float u_maxContrast;
 uniform vec2 u_resolution;
 uniform sampler2D u_tex0;
 uniform int u_numLevels;
-uniform float u_nodes[100];
-varying vec2 v_uv;
+uniform float u_nodes[100];		// list of node data for value levelling, array of values, each from 0 to 100.
+								//     odd indexes are targets, even indexes are ranges. eg 
+								//     [0]=min, [1]=tgt1, [2]=max
+								//     [2]=min, [3]=tgt2, [4]=max
 
 // refer to https://github.com/jrus/chromatist for Javascript implementation
 float pi = 3.14159;
@@ -264,8 +267,8 @@ bool in_gamut_sRGB(vec4 rgb) {
 	return (in_gamut(rgb.x) && in_gamut(rgb.y) && in_gamut(rgb.z));
 }
 
+// linear transform xsrc towards xtgt based on t, only whenever xsrc is between xmin and xmax
 float flatten(float xsrc, float xmin, float xtgt, float xmax,  float t) {
-		
 	float a = t * step(xmin, xsrc) * step(xsrc, xmax);
 	return mix(xsrc, xtgt, a);
 }
@@ -276,14 +279,16 @@ void main( void ) {
 	// float hx = 360.0 / 3.0;
 	// jch.z = floor(jch.z/hx)*hx;
 
+	// VALUE adustments based on leveling node targets, ranges and opacity
 	int limit = u_numLevels * 2;
 	float t = (100.0 - u_opacity) / 100.0;
 	for (int i = 2; i < 19; i += 2) {
-		if (i > limit) break;																		// workaround as for check cannot use uniforms
+		if (i > limit) break;												// workaround as FOR check cannot use uniforms
 		jch.x = flatten(jch.x, u_nodes[i-2], u_nodes[i-1], u_nodes[i], t);
 	}
 
-	jch.y = jch.y * (1.0 + u_maxContrast/50.0);														// optionally amp the chroma
+	// CHROMA adjustments (a) optionally amp the chroma, (b) optionally show the colors
+	jch.y = jch.y * (1.0 + u_maxContrast/50.0);														
 	jch.y = jch.y * u_showColors / 100.0;
 
 	// plate of J&C for a given hue which changes over time

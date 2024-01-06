@@ -1,7 +1,8 @@
 import { Template } from 'meteor/templating';
 import { _ } from 'meteor/underscore';
 import { store } from '/imports/store/index.js';
-import { isNumber, isArray } from 'util';
+import { changeValue } from '/imports/store/changeValue.js';
+import { isArray } from 'util';
 
 Template.panelForSettings.onCreated(function() {
 	const self = this;
@@ -18,9 +19,9 @@ Template.panelForSettings.helpers({
 	numLevels: () => { const n = store.get('thresholdSettings').numLevels; return n == 0 ? 'All' : n},
 	isLevels: () => store.get('thresholdSettings').numLevels > 0,
 	levels: () => { const n = store.get('thresholdSettings').numLevels; return _.range(1, n ? n + 1 : []) },
-	maxRange: () => { const d = store.get('thresholdSettings'); return d.nodes[d.levelSelected*2] },
-	outputTone: () => { const d = store.get('thresholdSettings'); return d.nodes[d.levelSelected*2-1] },
-	minRange: () => { const d = store.get('thresholdSettings'); return d.nodes[d.levelSelected*2-2] },
+	maxRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2].toFixed(1)) },
+	outputTone: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-1].toFixed(1)) },
+	minRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-2].toFixed(1)) },
 	opacities: () => _.range(0, 101, 20),
 	isOpacity: (lvl) => { const n = store.get('thresholdSettings').opacity; return n==lvl ? 'primary' : undefined},
 	isActiveLevel: (lvl) => { return (lvl==store.get('thresholdSettings').levelSelected)? 'active': undefined },
@@ -48,13 +49,6 @@ function defaultNodes(levels) {
 		numLevels: i, 
 		nodes: defaultValues[i]
 	}
-}
-
-function changeValue(x, dx) {
-	const result = (isNumber(dx*1)) ? x + dx*1 : x;
-	return (result > 100) ? 100 :
-		   (result < 0)   ? 0 
-		   				  : result;
 }
 
 Template.panelForSettings.events({

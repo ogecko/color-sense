@@ -6,6 +6,7 @@ import * as d3s from 'd3-selection';
 import * as d3sc from 'd3-scale';
 import * as d3f from 'd3-force';
 import { store } from '/imports/store/index.js';
+import { changeValue } from '/imports/store/changeValue.js';
 import { srgb_to_xyz, xyz_to_JuMuHu, hex_to_srgb, parse_colors, JuMuHu_to_label, JuMuHu_to_color } from 'color-cam16/dist/index.js';
 import { colorNames } from 'color-cam16/dist/color-names';
 
@@ -180,7 +181,7 @@ Template.panelForColor.onRendered(function () {
 			if (!doc.nodes) doc.nodes = [0,0,10,25,50,75,85,100,100];
 			const nodes = doc.nodes.map((d,i)=>({ 
 				i:i, 
-				Ju: d,  
+				Ju: Number(d.toFixed(1)),  
 				isTarget: i % 2,
 				isMasked: (i % 2) & doc.maskLevels[Math.floor(i/2)+1],
 				isSelected: i==doc.idxSelected
@@ -246,13 +247,19 @@ Template.panelForColor.onRendered(function () {
 
 	
 	self.keyboard.simple_combo(']', ev => store.mutate('thresholdSettings', s => { 
-		const i = s.idxSelected;
-		if (s.nodes[i]<100) s.nodes[i]++
+		s.nodes[s.idxSelected] = changeValue(s.nodes[s.idxSelected], 1);
+		return s; 
+	}));
+	self.keyboard.simple_combo('.', ev => store.mutate('thresholdSettings', s => { 
+		s.nodes[s.idxSelected] = changeValue(s.nodes[s.idxSelected], 0.1);
 		return s; 
 	}));
 	self.keyboard.simple_combo('[', ev => store.mutate('thresholdSettings', s => { 
-		const i = s.idxSelected;
-		if (s.nodes[i]>0) s.nodes[i]--
+		s.nodes[s.idxSelected] = changeValue(s.nodes[s.idxSelected], -1);
+		return s; 
+	}));
+	self.keyboard.simple_combo(',', ev => store.mutate('thresholdSettings', s => { 
+		s.nodes[s.idxSelected] = changeValue(s.nodes[s.idxSelected], -0.1);
 		return s; 
 	}));
 
