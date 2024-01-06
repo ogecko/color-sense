@@ -2,6 +2,14 @@
 	<div class="ui container segment">
 		<div class="ui threshold form">
             <div class="field">
+                <label>Opacity</label>
+                <div class="ui fluid mini icon buttons">
+                    {{#each level in opacities}}
+                        <div class="ui {{isOpacity level}} button js-onOpacity" data-level={{level}}>{{level}}%</div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="field">
                 <h3 class="ui  header">Value Leveling</h3>
                 <div class="ui fluid icon buttons">
                     <div class="ui button js-onNumLevelsDX" data-dx= -1><i class="chevron left icon"></i></div>
@@ -43,14 +51,6 @@
                         </div>
                     </div>
                 </div>
-            <div class="field">
-                <label>Value Leveling Opacity</label>
-                <div class="ui fluid mini icon buttons">
-                    {{#each level in opacities}}
-                        <div class="ui {{isOpacity level}} button js-onOpacity" data-level={{level}}>{{level}}%</div>
-                    {{/each}}
-                </div>
-            </div>
             {{/if}}
 
 
@@ -63,15 +63,21 @@
                 </div>
             </div>
             <div class="field">
-                <div class="field ui toggle checkbox js-maxContrast">
-                    <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
-                    <label>Max Chroma</label>
+                <div class="field ui toggle checkbox js-qHue">
+                    <input type="checkbox" name="qHue" {{isqHue}} tabindex="3" class="hidden">
+                    <label>Hue Quantizing</label>
                 </div>
             </div>
             <div class="field">
-                <div class="field ui toggle checkbox js-hueLeveling">
-                    <input type="checkbox" name="hueLeveling" {{isHueLeveling}} tabindex="3" class="hidden">
-                    <label>Hue Quantizing</label>
+                <div class="field ui toggle checkbox js-qChroma">
+                    <input type="checkbox" name="qChroma" {{isqChroma}} tabindex="3" class="hidden">
+                    <label>Chroma Quantizing</label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="field ui toggle checkbox js-maxContrast">
+                    <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
+                    <label>Chroma Boost</label>
                 </div>
             </div>
 

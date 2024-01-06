@@ -3,6 +3,8 @@ uniform float u_time;
 uniform float u_numEdges;
 uniform float u_opacity;
 uniform float u_showColors;
+uniform float u_qHue;
+uniform float u_qChroma;
 uniform float u_showEdges;
 uniform float u_maxContrast;
 uniform vec2 u_resolution;
@@ -276,9 +278,6 @@ float flatten(float xsrc, float xmin, float xtgt, float xmax,  float t) {
 void main( void ) {
 	vec4 jch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
 
-	// float hx = 360.0 / 3.0;
-	// jch.z = floor(jch.z/hx)*hx;
-
 	// VALUE adustments based on leveling node targets, ranges and opacity
 	int limit = u_numLevels * 2;
 	float t = (100.0 - u_opacity) / 100.0;
@@ -287,15 +286,30 @@ void main( void ) {
 		jch.x = flatten(jch.x, u_nodes[i-2], u_nodes[i-1], u_nodes[i], t);
 	}
 
-	// CHROMA adjustments (a) optionally amp the chroma, (b) optionally show the colors
-	jch.y = jch.y * (1.0 + u_maxContrast/50.0);														
+	// TEST plate of J&C for a given hue which changes over time
+	// jch.x = v_uv.y * 100.0;   // Value
+	// jch.y = v_uv.x * 125.0;	  // Chroma
+	// jch.z = u_time * 30.0;    // Hue
+	// if (in_gamut_sRGB(rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0))) ; else jch.x=0.0;
+
+
+	// HUE adjustment (a) optionally quantise the hue
+	float hx = 360.0 / 10.0;
+	jch.z = mix(jch.z, floor(jch.z/hx)*hx, t*step(50.0, u_qHue));
+
+	// CHROMA adjustment (a) optionally quantise the chroma
+	float cx = 125.0 / 10.0;
+	jch.y = mix(jch.y, floor(jch.y/cx)*cx+1.0, t*step(50.0, u_qChroma));
+
+	// CHROMA adjustments (b) optionally amp the chroma
+	float oldy = jch.y;
+	jch.y = mix(jch.y, jch.y * (1.0 + u_maxContrast/50.0), t);														
+	if (in_gamut_sRGB(rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0))) ; else jch.y=oldy;
+
+	// CHROMA adjustments (c) optionally show the colors
 	jch.y = jch.y * u_showColors / 100.0;
 
-	// plate of J&C for a given hue which changes over time
-	// jch.x = v_uv.y * 100.0;
-	// jch.y = v_uv.x * 125.0;
-	// jch.z = u_time * 30.0;
-
+	// Convert back to RGB
 	vec4 rgb = rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0);
 
 	// rgb.w = float(in_gamut_sRGB(rgb))+0.05-float(mod(jch.x, 10.0)<0.5||mod(jch.y, 10.0)<0.5)*0.1;

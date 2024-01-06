@@ -85,6 +85,8 @@ Template.sketch.onRendered(function () {
 			film.uniformTo('img.u_numEdges', doc.numEdges ? doc.numEdges : 0);
 			film.uniformTo('img.u_opacity', doc.opacity ? doc.opacity : 0);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
+			film.uniformTo('img.u_qHue', doc.qHue ? 100 : 0);
+			film.uniformTo('img.u_qChroma', doc.qChroma ? 100 : 0);
 			film.uniformTo('img.u_showEdges', doc.showSoftEdges ? 10 : 0);
 			film.uniformTo('img.u_maxContrast', doc.maxContrast ? 100 : 0);
 			film.uniformSet('img.u_numLevels', doc.numLevels ? doc.numLevels : 0);
