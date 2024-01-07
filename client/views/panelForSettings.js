@@ -32,15 +32,15 @@ Template.panelForSettings.helpers({
 	isShowColors: () => store.get('thresholdSettings').showColors ? 'checked' : undefined,
 	isqHue: () => store.get('thresholdSettings').qHue ? 'checked' : undefined,
 	isqChroma: () => store.get('thresholdSettings').qChroma ? 'checked' : undefined,
-	isShowSoftEdges: () => store.get('thresholdSettings').showSoftEdges ? 'checked' : undefined,
+	isShowEdges: () => store.get('thresholdSettings').showEdges ? 'checked' : undefined,
 	isMaxContrast: () => store.get('thresholdSettings').maxContrast ? 'checked' : undefined,
 });
 
 function defaultNodes(levels) {
 	const defaultValues = [
 		[],									 				//0			
-		[40, 50, 60],										//1
-		[15, 25, 50, 75, 85],								//2
+		[20, 50, 80],										//1
+		[0, 25, 50, 75, 100],								//2
 		[0, 0, 15, 50, 85, 100, 100],						//3
 		[0, 0, 10, 25, 50, 75, 90, 100, 100],				//4
 		[0, 0, 10, 20, 33, 50, 66, 80, 90, 100, 100],		//5
@@ -108,12 +108,9 @@ Template.panelForSettings.events({
 		return s;
 	}),
 	'click .js-showColors': () => store.mutate('thresholdSettings', s => { s.showColors = !s.showColors; return s; }),
+	'click .js-showEdges': () => store.mutate('thresholdSettings', s => { s.showEdges = !s.showEdges; return s; }),
 	'click .js-qHue': () => store.mutate('thresholdSettings', s => { s.qHue = !s.qHue; return s; }),
 	'click .js-qChroma': () => store.mutate('thresholdSettings', s => { s.qChroma = !s.qChroma; return s; }),
 	'click .js-maxContrast': () => store.mutate('thresholdSettings', s => { s.maxContrast = !s.maxContrast; return s; }),
-	// 'click .js-showSoftEdges': () => store.mutate('thresholdSettings', s => { s.showSoftEdges = !s.showSoftEdges; return s; }),
-	'click .js-showSoftEdges': () => {
-		store.set('thresholdSettings', { });
-	},
 });
 

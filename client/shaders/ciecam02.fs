@@ -275,9 +275,7 @@ float flatten(float xsrc, float xmin, float xtgt, float xmax,  float t) {
 	return mix(xsrc, xtgt, a);
 }
 
-void main( void ) {
-	vec4 jch = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
-
+vec4 adjust_jch(vec4 jch) {
 	// VALUE adustments based on leveling node targets, ranges and opacity
 	int limit = u_numLevels * 2;
 	float t = (100.0 - u_opacity) / 100.0;
@@ -292,7 +290,6 @@ void main( void ) {
 	// jch.z = u_time * 30.0;    // Hue
 	// if (in_gamut_sRGB(rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0))) ; else jch.x=0.0;
 
-
 	// HUE adjustment (a) optionally quantise the hue
 	float hx = 360.0 / 10.0;
 	jch.z = mix(jch.z, floor(jch.z/hx)*hx, t*step(50.0, u_qHue));
@@ -301,13 +298,50 @@ void main( void ) {
 	float cx = 125.0 / 10.0;
 	jch.y = mix(jch.y, floor(jch.y/cx)*cx+1.0, t*step(50.0, u_qChroma));
 
-	// CHROMA adjustments (b) optionally amp the chroma
-	float oldy = jch.y;
-	jch.y = mix(jch.y, jch.y * (1.0 + u_maxContrast/50.0), t);														
-	if (in_gamut_sRGB(rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0))) ; else jch.y=oldy;
+	// CHROMA adjustments (b) optionally boost the chroma
+	float newy = mix(jch.y, min(jch.y+20.0, 100.0), u_maxContrast/100.0);
+	jch.y = mix(jch.y, newy, t);
 
 	// CHROMA adjustments (c) optionally show the colors
 	jch.y = jch.y * u_showColors / 100.0;
+
+	return jch;
+}
+
+vec4 blur_rgb2jch() {
+	const float r=4.0;
+	float dx=1.0/u_resolution.x;
+	float dy=1.0/u_resolution.y;
+	float w, w0, xx, yy, rr=r*r;
+
+    w0 = 0.3780 / pow(r, 1.975);
+    vec2 p;
+    vec4 rgb = vec4(0.0,0.0,0.0,0.0);
+    for (float x=-r; x<=r; x++) { 
+		xx = x*x;
+		p.x = v_uv.x + (x*dx);
+    	for (float y=-r; y<=r; y++) { 
+			yy = y*y;
+			p.y = v_uv.y + (y*dy);
+			if (xx+yy <= rr)
+				{
+				w = w0 * exp((-xx-yy)/(2.0*rr));
+				rgb += adjust_jch(fwd_rgb2jch(texture2D(u_tex0, p), D65, 100.0, 20.0, 1.0))* w;
+				}
+		}
+	}
+	vec4 jch = rgb;
+	return jch;
+}
+
+
+void main( void ) {
+	vec4 jch = adjust_jch(fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0));
+
+	// EDGE adjustment (a) optionally outline all major shifts in tone
+	float t = (u_showEdges) / 100.0;
+	vec4 jchB = blur_rgb2jch();
+	jch.x = mix(jch.x, 100.0-(jchB.x-jch.x)*5.0, t);
 
 	// Convert back to RGB
 	vec4 rgb = rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0);
