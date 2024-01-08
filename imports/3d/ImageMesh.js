@@ -19,6 +19,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 	// create the texture to hold the image
 	const texture = new THREE.Texture();
 	texture.minFilter = THREE.LinearFilter;
+	// texture.anisotropy = 8;
 	// texture.magFilter = THREE.NearestFilter;
 	texture.generateMipmaps = false;
 
@@ -27,6 +28,7 @@ export default function ImageMesh(imagePath, shaderName, renderer) {
 	mesh.scale.x = 0.0001;	// dont show anything until loaded 
 
 	// load the image, assign to texture, resize mesh, assign as u_tex0 for shader
+	uniforms.u_resolution.value = { x: 1, y: 1 };
 	const image = new THREE.ImageLoader().load(imagePath, function (image) {
 		console.log(`Image size: ${image.width} x ${image.height}`);
 		texture.image = image;

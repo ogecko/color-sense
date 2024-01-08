@@ -56,37 +56,60 @@
 
                     
             <h3 class="ui dividing header">Chroma and Hue Settings</h3>
-            <div class="field">
-                <div class="field ui toggle checkbox js-showColors">
-                    <input type="checkbox" name="showColors" {{isShowColors}} tabindex="1" class="hidden">
-                    <label>Show Colors</label>
+            <div class="grouped fields">
+                <div class="field">
+                    <div class="field ui toggle checkbox js-showColors">
+                        <input type="checkbox" name="showColors" {{isShowColors}} tabindex="1" class="hidden">
+                        <label>Show Colors</label>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="field ui toggle checkbox js-qHue">
-                    <input type="checkbox" name="qHue" {{isqHue}} tabindex="3" class="hidden">
-                    <label>Hue Quantizing</label>
+                <div class="field">
+                    <div class="field ui toggle checkbox js-qHue">
+                        <input type="checkbox" name="qHue" {{isqHue}} tabindex="3" class="hidden">
+                        <label>Hue Quantizing</label>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="field ui toggle checkbox js-qChroma">
-                    <input type="checkbox" name="qChroma" {{isqChroma}} tabindex="3" class="hidden">
-                    <label>Chroma Quantizing</label>
+                <div class="field">
+                    <div class="field ui toggle checkbox js-qChroma">
+                        <input type="checkbox" name="qChroma" {{isqChroma}} tabindex="3" class="hidden">
+                        <label>Chroma Quantizing</label>
+                    </div>
                 </div>
-            </div>
-            <div class="field">
-                <div class="field ui toggle checkbox js-maxContrast">
-                    <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
-                    <label>Chroma Boost</label>
+                <div class="field">
+                    <div class="field ui toggle checkbox js-maxContrast">
+                        <input type="checkbox" name="maxContrast" {{isMaxContrast}} tabindex="3" class="hidden">
+                        <label>Chroma Boost</label>
+                    </div>
                 </div>
             </div>
 
             <h3 class="ui dividing header">Outline Settings</h3>
-            <div class="field">
+            <div class="">
                 <div class="field ui toggle checkbox js-showEdges">
                     <input type="checkbox" name="showEdges" {{isShowEdges}} tabindex="3" class="hidden">
                     <label>Show Outline</label>
                 </div>
+
+                {{#if isShowEdges}}
+                    <div class="ui two column grid">
+                        <div class="column field">
+                            <label>Line Thickness</label>
+                            <div class="ui compact icon buttons">
+                                {{#each level in five}}
+                                <button class="ui button {{isEdgeRadius level}} js-onEdgeRadius" data-value={{level}}>{{level}}</button>
+                                {{/each}}
+                            </div>
+                        </div>
+                        <div class="column field">
+                            <label>Noise Reduction</label>
+                            <div class="ui compact icon buttons">
+                                {{#each level in five}}
+                                <button class="ui button {{isEdgeDb level}} js-onEdgeDb" data-value={{level}}>{{level}}</button>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                {{/if}}            
             </div>
 
 		</div>

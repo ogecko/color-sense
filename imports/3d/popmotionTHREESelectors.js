@@ -25,6 +25,8 @@ export const setSelectors = {
   u_numLevels: (element, value) => element.material.uniforms.u_numLevels.value = value,
   u_nodes: (element, value) => element.material.uniforms.u_nodes.value = value,
   u_opacity: (element, value) => element.material.uniforms.u_opacity.value = value,
+  u_edgeRadius: (element, value) => element.material.uniforms.u_edgeRadius.value = value,
+  u_edgeDb: (element, value) => element.material.uniforms.u_edgeDb.value = value,
   u_resolution: (element, value) => element.material.uniforms.u_resolution.value = value,
   u_mouse: (element, value) => element.material.uniforms.u_mouse.value = value,
   u_flag01: (element, value) => element.material.uniforms.u_flag01.value = value,
@@ -66,6 +68,8 @@ export const getSelectors = {
   u_numLevels: element => element.material.uniforms.u_numLevels.value,
   u_nodes: element => element.material.uniforms.u_nodes.value,
   u_opacity: element => element.material.uniforms.u_opacity.value,
+  u_edgeRadius: element => element.material.uniforms.u_edgeRadius.value,
+  u_edgeDb: element => element.material.uniforms.u_edgeDb.value,
   render: element => element.render,
 };
 

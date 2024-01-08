@@ -2,6 +2,8 @@ varying vec2 v_uv;
 uniform float u_time;
 uniform float u_numEdges;
 uniform float u_opacity;
+uniform float u_edgeRadius;
+uniform float u_edgeDb;
 uniform float u_showColors;
 uniform float u_qHue;
 uniform float u_qChroma;
@@ -309,23 +311,26 @@ vec4 adjust_jch(vec4 jch) {
 }
 
 vec4 blur_rgb2jch() {
-	const float r=4.0;
-	float dx=1.0/u_resolution.x;
-	float dy=1.0/u_resolution.y;
-	float w, w0, xx, yy, rr=r*r;
+	// const float r=4.0;
+	float r = u_edgeRadius*2.5 + 3.0, rr=r*r;
+	float dx = 1.0/u_resolution.x;
+	float dy = 1.0/u_resolution.y;
+	float w, w0, x, y, xx, yy;
 
     w0 = 0.3780 / pow(r, 1.975);
     vec2 p;
     vec4 rgb = vec4(0.0,0.0,0.0,0.0);
-    for (float x=-r; x<=r; x++) { 
+    for (float i=0.0; i<=30.0; i++) { 
+		x = i - r; if (x > r) break;										// workaround as FOR check cannot use uniforms
 		xx = x*x;
-		p.x = v_uv.x + (x*dx);
-    	for (float y=-r; y<=r; y++) { 
+		p.x = v_uv.x + (x * dx);
+    	for (float j=0.0; j<=30.0; j++) { 
+			y = j - r; if (y > r) break;									// workaround as FOR check cannot use uniforms
 			yy = y*y;
-			p.y = v_uv.y + (y*dy);
+			p.y = v_uv.y + (y * dy);
 			if (xx+yy <= rr)
 				{
-				w = w0 * exp((-xx-yy)/(2.0*rr));
+				w = w0 * exp((-xx-yy)/(2.0 * rr));
 				rgb += adjust_jch(fwd_rgb2jch(texture2D(u_tex0, p), D65, 100.0, 20.0, 1.0))* w;
 				}
 		}
@@ -336,17 +341,16 @@ vec4 blur_rgb2jch() {
 
 
 void main( void ) {
-	vec4 jch = adjust_jch(fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0));
+	vec4 jch1 = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
+	vec4 jch2 = blur_rgb2jch();
+	vec4 jch3 = adjust_jch(jch1);
 
 	// EDGE adjustment (a) optionally outline all major shifts in tone
-	float t = (u_showEdges) / 100.0;
-	vec4 jchB = blur_rgb2jch();
-	jch.x = mix(jch.x, 100.0-(jchB.x-jch.x)*5.0, t);
+	float t = u_showEdges / 100.0 * (100.0 - u_opacity) / 100.0;
+	jch3.x = mix(jch3.x, 100.0-(step(u_edgeDb*2.0 + 2.0, jch2.x-jch3.x)*100.0), t);
 
 	// Convert back to RGB
-	vec4 rgb = rev_jch2rgb(jch, D65, 100.0, 20.0, 1.0);
-
-	// rgb.w = float(in_gamut_sRGB(rgb))+0.05-float(mod(jch.x, 10.0)<0.5||mod(jch.y, 10.0)<0.5)*0.1;
+	vec4 rgb = rev_jch2rgb(jch3, D65, 100.0, 20.0, 1.0);
 
 	gl_FragColor = rgb;
 

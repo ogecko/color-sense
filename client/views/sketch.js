@@ -84,6 +84,8 @@ Template.sketch.onRendered(function () {
 			console.log('updating', doc);
 			film.uniformTo('img.u_numEdges', doc.numEdges ? doc.numEdges : 0);
 			film.uniformTo('img.u_opacity', doc.opacity ? doc.opacity : 0);
+			film.uniformTo('img.u_edgeRadius', doc.edgeRadius ? doc.edgeRadius : 1);
+			film.uniformTo('img.u_edgeDb', doc.edgeDb ? doc.edgeDb : 1);
 			film.uniformTo('img.u_showColors', doc.showColors ? 100 : 0);
 			film.uniformTo('img.u_qHue', doc.qHue ? 100 : 0);
 			film.uniformTo('img.u_qChroma', doc.qChroma ? 100 : 0);

@@ -19,11 +19,14 @@ Template.panelForSettings.helpers({
 	numLevels: () => { const n = store.get('thresholdSettings').numLevels; return n == 0 ? 'All' : n},
 	isLevels: () => store.get('thresholdSettings').numLevels > 0,
 	levels: () => { const n = store.get('thresholdSettings').numLevels; return _.range(1, n ? n + 1 : []) },
+	five: () => _.range(1, 6),
 	maxRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2].toFixed(1)) },
 	outputTone: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-1].toFixed(1)) },
 	minRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-2].toFixed(1)) },
 	opacities: () => _.range(0, 101, 20),
 	isOpacity: (lvl) => { const n = store.get('thresholdSettings').opacity; return n==lvl ? 'primary' : undefined},
+	isEdgeRadius: (lvl) => { const n = store.get('thresholdSettings').edgeRadius; return n==lvl ? 'primary' : undefined},
+	isEdgeDb: (lvl) => { const n = store.get('thresholdSettings').edgeDb; return n==lvl ? 'primary' : undefined},
 	isActiveLevel: (lvl) => { return (lvl==store.get('thresholdSettings').levelSelected)? 'active': undefined },
 	isActiveMaxRange: () => { const d = store.get('thresholdSettings'); return (d.levelSelected*2 == d.idxSelected)? 'blue': undefined },
 	isActiveOutputTone: () => { const d = store.get('thresholdSettings'); return (d.levelSelected*2-1 == d.idxSelected)? 'blue': undefined },
@@ -100,6 +103,14 @@ Template.panelForSettings.events({
 
 	'click .js-onOpacity': (ev) => store.mutate('thresholdSettings', s => {
 		s.opacity = ev.currentTarget.dataset.level*1;	// ensure number not string
+		return s;
+	}),
+	'click .js-onEdgeRadius': (ev) => store.mutate('thresholdSettings', s => {
+		s.edgeRadius = ev.currentTarget.dataset.value*1;	// ensure number not string
+		return s;
+	}),
+	'click .js-onEdgeDb': (ev) => store.mutate('thresholdSettings', s => {
+		s.edgeDb = ev.currentTarget.dataset.value*1;	// ensure number not string
 		return s;
 	}),
 	'click .js-maskLevel': (ev) => store.mutate('thresholdSettings', s => {
