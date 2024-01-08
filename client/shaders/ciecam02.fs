@@ -331,7 +331,7 @@ vec4 blur_rgb2jch() {
 			if (xx+yy <= rr)
 				{
 				w = w0 * exp((-xx-yy)/(2.0 * rr));
-				rgb += adjust_jch(fwd_rgb2jch(texture2D(u_tex0, p), D65, 100.0, 20.0, 1.0))* w;
+				rgb += adjust_jch(fwd_rgb2jch(texture2D(u_tex0, p), D65, 100.0, 20.0, 1.0)) * w;
 				}
 		}
 	}
@@ -342,15 +342,18 @@ vec4 blur_rgb2jch() {
 
 void main( void ) {
 	vec4 jch1 = fwd_rgb2jch(texture2D(u_tex0, v_uv), D65, 100.0, 20.0, 1.0);
-	vec4 jch2 = blur_rgb2jch();
-	vec4 jch3 = adjust_jch(jch1);
+	vec4 jch2 = adjust_jch(jch1);
 
-	// EDGE adjustment (a) optionally outline all major shifts in tone
-	float t = u_showEdges / 100.0 * (100.0 - u_opacity) / 100.0;
-	jch3.x = mix(jch3.x, 100.0-(step(u_edgeDb*2.0 + 2.0, jch2.x-jch3.x)*100.0), t);
+	if (u_showEdges>0.0) {
+		// EDGE adjustment (a) optionally outline all major shifts in tone
+		vec4 jch3 = blur_rgb2jch();
+		float t = u_showEdges / 100.0 * (100.0 - u_opacity) / 100.0;
+		jch2.x = mix(jch2.x, 100.0-(step(u_edgeDb*2.0 + 2.0, jch3.x-jch2.x)*100.0), t);
+
+	}
 
 	// Convert back to RGB
-	vec4 rgb = rev_jch2rgb(jch3, D65, 100.0, 20.0, 1.0);
+	vec4 rgb = rev_jch2rgb(jch2, D65, 100.0, 20.0, 1.0);
 
 	gl_FragColor = rgb;
 
