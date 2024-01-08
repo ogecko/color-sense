@@ -223,8 +223,16 @@ Template.panelForColor.onRendered(function () {
 			treelines.enter()
 				.append("polyline")
 				.attr("class", "treelines")
+				.attr('cursor', 'pointer')
 				.attr("stroke","black")
 				.style("stroke-width", '.5px')
+				.on('click', d => store.mutate('thresholdSettings', s => {
+					s.idxSelected = d.i; 
+					s.levelSelected = Math.floor(d.i / 2)+1;
+					if (s.levelSelected > s.numLevels) s.levelSelected = s.numLevels;
+					s.maskLevels[s.levelSelected] = !s.maskLevels[s.levelSelected];
+					return s
+				}))
 			.merge(treelines).transition()
 				.attr("points", d => (d.isTarget ? 
 						// arrow pointing to Output Tone Target
