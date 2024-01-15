@@ -6,6 +6,8 @@
 
 # Backlog of Defects
 * Migration to cam16 (sketch shader)
+* White color sampling 10B3
+* Projection vs Screen pixel ratio
 
 # Completed
 * Move to cam16 color space (sketch, scatter, pallette)
@@ -17,3 +19,4 @@
 * Allow masking of each level independantly
 * Fix scrolling re-enable after sketch
 * Outline sketching with control over line thickness and noise reduction
+* Outline sketching using Canny Edge Detection

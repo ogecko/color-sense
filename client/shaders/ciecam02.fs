@@ -365,19 +365,27 @@ vec4 sobel(vec2 fragCoord, vec2 dir){
     float zn = getAve(uv + (vec2( 0,-1) + dir ) * texel * thickness);
     float pn = getAve(uv + (vec2(+1,-1) + dir ) * texel * thickness);
     
-    // np zp pp
-    // nz zz pz
-    // nn zn pn
+	//                               gx												  gy
+    // np zp pp				 -46.84	 0.   +46.84	 						-46.84  -162.32  -46.84
+    // nz zz pz				-162.32	 0.  +162.32							  0.       0.      0.
+    // nn zn pn				 -46.84	 0.   +46.84							+46.84  +162.32  +46.84
+
+	// mq nq zq pq qq
+	// mp np zp pp qp
+    // mz nz zz pz qz
+    // mn nn zn pn qn
+	// mm nm zm pm qm
+
     
     // SOBEL filter - standard operator
     // float gx = (np*-1. + nz*-2. + nn*-1. + pp*1. + pz*2. + pn*1.);
     // float gy = (np*-1. + zp*-2. + pp*-1. + nn*1. + zn*2. + pn*1.);
-    // SOBEL filter - most common, better rotational symmetry, // https://www.shadertoy.com/view/Wds3Rl
+    // SOBEL filter - most common, better rotational symmetry, https://en.wikipedia.org/wiki/Sobel_operator#Alternative_operators 
     // float gx = (np*-3. + nz*-10. + nn*-3. + pp*3. + pz*10. + pn*3.);
     // float gy = (np*-3. + zp*-10. + pp*-3. + nn*3. + zn*10. + pn*3.);
-    // SOBEL filter - optimised 8 bit operator, derivative kernel, https://en.wikipedia.org/wiki/Sobel_operator#Alternative_operators 
-    float gx = (np*-47. + nz*-162. + nn*-47. + pp*47. + pz*162. + pn*47.);
-    float gy = (np*-47. + zp*-162. + pp*-47. + nn*47. + zn*162. + pn*47.);
+    // SCHARR filter - optimised 3x3 operator, derivative kernel, p155 https://archiv.ub.uni-heidelberg.de/volltextserver/962/1/Diss.pdf
+    float gx = (np*-46.84 + nz*-162.32 + nn*-46.84 + pp*46.84 + pz*162.32 + pn*46.84);
+    float gy = (np*-46.84 + zp*-162.32 + pp*-46.84 + nn*46.84 + zn*162.32 + pn*46.84);
     
     vec2 G = vec2(gx,gy);
     
