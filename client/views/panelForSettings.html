@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="field">
-                <h3 class="ui  header">Value Leveling</h3>
+                <!-- <h3 class="ui  header">Value Leveling</h3> -->
                 <div class="ui fluid icon buttons">
                     <div class="ui button js-onNumLevelsDX" data-dx= -1><i class="chevron left icon"></i></div>
                     <div class="ui button js-onLevelMid">{{numLevels}} Levels</div>
@@ -91,11 +91,10 @@
                 </div>
 
                 {{#if isShowEdges}}
-                    <div class="ui two column grid">
                         <div class="column field">
                             <label>Line Thickness</label>
                             <div class="ui compact icon buttons">
-                                {{#each level in five}}
+                                {{#each level in outlineSettings}}
                                 <button class="ui button {{isEdgeRadius level}} js-onEdgeRadius" data-value={{level}}>{{level}}</button>
                                 {{/each}}
                             </div>
@@ -103,12 +102,11 @@
                         <div class="column field">
                             <label>Noise Reduction</label>
                             <div class="ui compact icon buttons">
-                                {{#each level in five}}
+                                {{#each level in outlineSettings}}
                                 <button class="ui button {{isEdgeDb level}} js-onEdgeDb" data-value={{level}}>{{level}}</button>
                                 {{/each}}
                             </div>
                         </div>
-                    </div>
                 {{/if}}            
             </div>
 

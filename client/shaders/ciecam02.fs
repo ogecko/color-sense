@@ -352,7 +352,7 @@ float getAve(vec2 uv){
 vec4 sobel(vec2 fragCoord, vec2 dir){
     vec2 uv = fragCoord/u_resolution.xy;
     vec2 texel = 1./u_resolution.xy;
-	float thickness = max(1., u_edgeRadius);
+	float thickness = max(0.5, u_edgeRadius/1.6);
     float np = getAve(uv + (vec2(-1,+1) + dir ) * texel * thickness);
     float zp = getAve(uv + (vec2( 0,+1) + dir ) * texel * thickness);
     float pp = getAve(uv + (vec2(+1,+1) + dir ) * texel * thickness);
@@ -444,7 +444,7 @@ void main( void ) {
 
 		// EDGE adjustment (b) optionally outline using canny edge detection
 		vec2 fragCoord = v_uv*u_resolution.xy;
-		float threshold = u_edgeDb*8. + 3.;
+		float threshold = u_edgeDb*10. + 3.;
 		float edge = cannyEdge(fragCoord, threshold/2., threshold);  // The low threshold is typically set to 1/2 of the high threshold
 		float t = u_showEdges / 100.0 * (100.0 - u_opacity) / 100.0;
 		jch2.x = mix(jch2.x, 100. - edge*100., t);

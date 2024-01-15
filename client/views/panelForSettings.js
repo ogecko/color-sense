@@ -19,7 +19,7 @@ Template.panelForSettings.helpers({
 	numLevels: () => { const n = store.get('thresholdSettings').numLevels; return n == 0 ? 'All' : n},
 	isLevels: () => store.get('thresholdSettings').numLevels > 0,
 	levels: () => { const n = store.get('thresholdSettings').numLevels; return _.range(1, n ? n + 1 : []) },
-	five: () => _.range(1, 6),
+	outlineSettings: () => _.range(1, 11),
 	maxRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2].toFixed(1)) },
 	outputTone: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-1].toFixed(1)) },
 	minRange: () => { const d = store.get('thresholdSettings'); return Number(d.nodes[d.levelSelected*2-2].toFixed(1)) },
