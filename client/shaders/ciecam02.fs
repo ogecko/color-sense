@@ -340,15 +340,14 @@ vec4 blur_rgb2jch() {
 	return jch;
 }
 
-// #define thickness 3.
-
+// Sample texture lumen at given uv co-ordinate
 float getAve(vec2 uv){
     vec3 rgb = texture2D(u_tex0, uv).rgb;
     vec3 lum = vec3(0.299, 0.587, 0.114);
     return dot(lum, rgb);
 }
 
-// Detect edge.
+// Detect edge using differential operator.
 vec4 sobel(vec2 fragCoord, vec2 dir){
     vec2 uv = fragCoord/u_resolution.xy;
     vec2 texel = 1./u_resolution.xy;
@@ -370,22 +369,55 @@ vec4 sobel(vec2 fragCoord, vec2 dir){
     // nz zz pz				-162.32	 0.  +162.32							  0.       0.      0.
     // nn zn pn				 -46.84	 0.   +46.84							+46.84  +162.32  +46.84
 
+    float mq = getAve(uv + (vec2(-2,+2) + dir ) * texel * thickness);
+    float nq = getAve(uv + (vec2(-1,+2) + dir ) * texel * thickness);
+    float zq = getAve(uv + (vec2( 0,+2) + dir ) * texel * thickness);
+    float pq = getAve(uv + (vec2(+1,+2) + dir ) * texel * thickness);
+    float qq = getAve(uv + (vec2(+2,+2) + dir ) * texel * thickness);
+
+    float mp = getAve(uv + (vec2(-2,+1) + dir ) * texel * thickness);
+    float qp = getAve(uv + (vec2(+2,+1) + dir ) * texel * thickness);
+
+    float mz = getAve(uv + (vec2(-2, 0) + dir ) * texel * thickness);
+    float qz = getAve(uv + (vec2(+2, 0) + dir ) * texel * thickness);
+
+    float mn = getAve(uv + (vec2(-2,-1) + dir ) * texel * thickness);
+    float qn = getAve(uv + (vec2(+2,-1) + dir ) * texel * thickness);
+
+    float mm = getAve(uv + (vec2(-2,-2) + dir ) * texel * thickness);
+    float nm = getAve(uv + (vec2(-1,-2) + dir ) * texel * thickness);
+    float zm = getAve(uv + (vec2( 0,-2) + dir ) * texel * thickness);
+    float pm = getAve(uv + (vec2(+1,-2) + dir ) * texel * thickness);
+    float qm = getAve(uv + (vec2(+2,-2) + dir ) * texel * thickness);
+
 	// mq nq zq pq qq
 	// mp np zp pp qp
     // mz nz zz pz qz
     // mn nn zn pn qn
 	// mm nm zm pm qm
 
+	float gx=0.0, gy=0.0;
     
     // SOBEL filter - standard operator
-    // float gx = (np*-1. + nz*-2. + nn*-1. + pp*1. + pz*2. + pn*1.);
-    // float gy = (np*-1. + zp*-2. + pp*-1. + nn*1. + zn*2. + pn*1.);
+    //  gx = (np*-1. + nz*-2. + nn*-1. + pp*1. + pz*2. + pn*1.);
+    //  gy = (np*-1. + zp*-2. + pp*-1. + nn*1. + zn*2. + pn*1.);
     // SOBEL filter - most common, better rotational symmetry, https://en.wikipedia.org/wiki/Sobel_operator#Alternative_operators 
-    // float gx = (np*-3. + nz*-10. + nn*-3. + pp*3. + pz*10. + pn*3.);
-    // float gy = (np*-3. + zp*-10. + pp*-3. + nn*3. + zn*10. + pn*3.);
-    // SCHARR filter - optimised 3x3 operator, derivative kernel, p155 https://archiv.ub.uni-heidelberg.de/volltextserver/962/1/Diss.pdf
-    float gx = (np*-46.84 + nz*-162.32 + nn*-46.84 + pp*46.84 + pz*162.32 + pn*46.84);
-    float gy = (np*-46.84 + zp*-162.32 + pp*-46.84 + nn*46.84 + zn*162.32 + pn*46.84);
+    //  gx = (np*-3. + nz*-10. + nn*-3. + pp*3. + pz*10. + pn*3.);
+    //  gy = (np*-3. + zp*-10. + pp*-3. + nn*3. + zn*10. + pn*3.);
+	// SCHARR filter - optimised 3x3 operator, derivative kernel, p155 https://archiv.ub.uni-heidelberg.de/volltextserver/962/1/Diss.pdf
+	//  gx = (np*-46.84 + nz*-162.32 + nn*-46.84 + pp*46.84 + pz*162.32 + pn*46.84);
+	//  gy = (np*-46.84 + zp*-162.32 + pp*-46.84 + nn*46.84 + zn*162.32 + pn*46.84);
+	// SCHARR filter - optimised 5x5 operator, derivative kernel, p155, https://archiv.ub.uni-heidelberg.de/volltextserver/962/1/Diss.pdf
+	//  Table B.11 5x5-opt vectors mutiplied out and divided by 107 to get same magnitude as 3x3-opt
+		gx =  (mq*-1.175 + mp*-12.279 + mz*-23.981 + mn*-12.279 + mm*-1.175);
+		gx += (nq*-4.720 + np*-49.335 + nz*-96.354 + nn*-49.335 + nm*4.720);
+		gx += (pq*4.720 + pp*49.335  + pz*96.354  + pn*49.335  + pm*4.720);
+		gx += (qq*1.175 + qp*12.279  + qz*23.981  + qn*12.279  + qm*1.175);
+
+		gy =  (mq*-1.175 + nq*-12.279 + zq*-23.981 + pq*-12.279 + qq*-1.175);
+		gy += (mp*-4.720 + np*-49.335 + zp*-96.354 + pp*-49.335 + qp*-4.720);
+		gy += (mn*4.720  + nn*49.335  + zn*96.354  + pn*49.335  + qn*4.720);
+		gy += (mm*1.175  + nm*12.279  + zm*23.981  + pm*12.279  + qm*1.175);
     
     vec2 G = vec2(gx,gy);
     
@@ -405,11 +437,8 @@ vec2 hysteresisThr(vec2 fragCoord, float mn, float mx){
     
     vec4 edgep = sobel(fragCoord, dir);
     vec4 edgen = sobel(fragCoord, -dir);
-	// supress this edge  - if this gradient is less than gradient in positive and negative direction
+	// supress this edge  - if this gradient is less than gradient in positive or negative direction
     if(edge.z < edgep.z || edge.z < edgen.z ) edge.z = 0.;
-    // vec4 edgep2 = sobel(fragCoord, dir*2.);
-    // vec4 edgen2 = sobel(fragCoord, -dir*2.);
-    // if(edge.z < edgep.z || edge.z < edgen.z || edge.z < edgep2.z || edge.z < edgen2.z ) edge.z = 0.;
     
     return vec2(
         (edge.z > mn) ? edge.z : 0.,		// weak edge (or strong edge)
@@ -452,8 +481,8 @@ void main( void ) {
 
 		// EDGE adjustment (b) optionally outline using canny edge detection
 		vec2 fragCoord = v_uv*u_resolution.xy;
-		float threshold = u_edgeDb*10. + 3.;
-		float edge = cannyEdge(fragCoord, threshold/2., threshold);  // The low threshold is typically set to 1/2 of the high threshold
+		float threshold = u_edgeDb*10. + 5.;
+		float edge = cannyEdge(fragCoord, threshold/2., threshold);  // The weak threshold is typically set to 1/2 of the strong threshold
 		float t = u_showEdges / 100.0 * (100.0 - u_opacity) / 100.0;
 		jch2.x = mix(jch2.x, 100. - edge*100., t);
 
