@@ -1,13 +1,12 @@
 # Backlog of Enhancement Requests
+* Save altered image/outline as a png
 * Watercolor painting workflow (1. Whites, 2. Lights, 3. Darks, 4. Blacks)
-* Cater for varying aspect ratio of pixels (screen 1x1, project 1x1.1)
 * Thumbnail Value Study
 * Hue pallete rainbow, intertial drag to new hue
 
 # Backlog of Defects
 * Migration to cam16 (sketch shader)
 * White color sampling 10B3
-* Projection vs Screen pixel ratio
 
 # Completed
 * Move to cam16 color space (sketch, scatter, pallette)
@@ -20,3 +19,4 @@
 * Fix scrolling re-enable after sketch
 * Outline sketching with control over line thickness and noise reduction
 * Outline sketching using Canny Edge Detection
+* Cater for varying aspect ratio of pixels (screen 1x1, project 1x1.1)

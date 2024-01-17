@@ -103,6 +103,7 @@ Template.sketch.onRendered(function () {
 			console.log('updating', doc);
 			film.zoomTo(doc.zoomLevel);
 			noLockView = !doc.lockView;
+			film.uniformTo('img.scaleX', doc.projectorView ? 11.5 : 10 )
 		}
 	});
 
