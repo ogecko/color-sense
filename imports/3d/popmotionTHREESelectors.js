@@ -70,6 +70,7 @@ export const getSelectors = {
   u_opacity: element => element.material.uniforms.u_opacity.value,
   u_edgeRadius: element => element.material.uniforms.u_edgeRadius.value,
   u_edgeDb: element => element.material.uniforms.u_edgeDb.value,
+  u_resolution: element => element.material.uniforms.u_resolution.value,
   render: element => element.render,
 };
 

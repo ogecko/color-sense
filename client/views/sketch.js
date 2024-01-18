@@ -104,6 +104,10 @@ Template.sketch.onRendered(function () {
 			film.zoomTo(doc.zoomLevel);
 			noLockView = !doc.lockView;
 			film.uniformTo('img.scaleX', doc.projectorView ? 11.5 : 10 )
+			if (doc.saveImage) {
+				store.mutate('viewSettings', s => { s.saveImage = false; return s; })
+				film.saveImageToFile();
+			}
 		}
 	});
 

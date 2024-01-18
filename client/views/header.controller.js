@@ -31,6 +31,10 @@ Template.header.events({
 		s.projectorView = !s.projectorView;
 		return s;
 	}),
+	'click .js-saveImage': () => store.mutate('viewSettings', s => {
+		s.saveImage = !s.saveImage;
+		return s;
+	}),
 	'click .js-zoom': (ev) => store.mutate('viewSettings', s => {
 		s.zoomLevel = +ev.currentTarget.dataset.zoomlevel;
 		return s;

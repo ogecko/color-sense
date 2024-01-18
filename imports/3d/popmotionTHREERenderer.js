@@ -16,6 +16,7 @@ class popmotionTHREERenderer extends Renderer {
 	constructor(props) {
 		super(props);
 		this.onWindowResize = this.onWindowResize.bind(this);
+		this.saveImageToFile = this.saveImageToFile.bind(this);
 		this.zoomTo = this.zoomTo.bind(this);
 		this.panToStartDrag = this.panToStartDrag.bind(this);
 		this.panToContinueDrag = this.panToContinueDrag.bind(this);
@@ -32,7 +33,7 @@ class popmotionTHREERenderer extends Renderer {
 		this.scene.background = new THREE.Color(0x09253A);
 		this.camera = new THREE.PerspectiveCamera(45, this.getWindowSize().aspect, 0.1, 1000);
 		this.camera.position.z = 10;
-		this.renderer = new THREE.WebGLRenderer({ preserveDrawingBuffer: true });
+		this.renderer = new THREE.WebGLRenderer({ preserveDrawingBuffer: true, antialias: true });
 		this.renderer.localClippingEnabled = true;
 		this.container.append(this.renderer.domElement);
 
@@ -198,6 +199,31 @@ class popmotionTHREERenderer extends Renderer {
 		// This invalidates the tap function as it doesnt calculate the correct pixel co-ord for the tap event
 		// this.renderer.setPixelRatio(window.devicePixelRatio); 
 	}
+	saveImageToFile() {
+		if (this.namespace.camera && this.namespace.img) {
+			const resolution = this.get("img.u_resolution");
+			const aspect = resolution.x/resolution.y;
+			const FOV = (this.camera.fov / 2) * (Math.PI / 180); 	// Veritical FOV / 2 in Radians
+			const vert = 10 / 2 / aspect;							// Vertical height / 2 
+			const cameraz = vert / Math.tan(FOV);					// Height of Camera to get full vertical in frame
+			this.renderer.setSize(resolution.x, resolution.y);
+			this.set('camera.aspect', aspect);
+			this.set('camera.x', 0);
+			this.set('camera.y', 0);
+			this.set('camera.z', cameraz);
+			this.set('camera.zoom',1);
+			this.set('img.scaleX',10);
+			this.onRender();
+
+			console.log('Saving Image:',resolution);
+			const data = this.renderer.context.canvas.toDataURL();
+			var img = document.getElementById("js-saveImage");
+			img.setAttribute('src', data);
+			this.set('camera.z', 10);
+			this.onWindowResize();
+		}
+	}
+
 
 	removeScrollBars() {
 		$('body').css('overflow','hidden');

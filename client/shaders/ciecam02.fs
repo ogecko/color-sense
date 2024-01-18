@@ -1,6 +1,6 @@
 varying vec2 v_uv;
 uniform float u_time;
-uniform float u_numEdges;
+uniform float u_numEdges;	// no longer used (see u_numLevels and u_nodes)
 uniform float u_opacity;
 uniform float u_edgeRadius;
 uniform float u_edgeDb;
@@ -351,7 +351,7 @@ float getAve(vec2 uv){
 vec4 sobel(vec2 fragCoord, vec2 dir){
     vec2 uv = fragCoord/u_resolution.xy;
     vec2 texel = 1./u_resolution.xy;
-	float thickness = max(0.5, u_edgeRadius/1.6);
+	float thickness = max(0.5, u_edgeRadius);
     float np = getAve(uv + (vec2(-1,+1) + dir ) * texel * thickness);
     float zp = getAve(uv + (vec2( 0,+1) + dir ) * texel * thickness);
     float pp = getAve(uv + (vec2(+1,+1) + dir ) * texel * thickness);
