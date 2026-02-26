@@ -28,7 +28,7 @@
     "d3-transition": "^1.0.4",
     "hammer-touchemulator": "0.0.2",
     "hammerjs": "^2.0.8",
-    "meteor-node-stubs": "^0.2.11",
+    "meteor-node-stubs": "^1.2.26",
     "moment": "^2.29.4",
     "numeral": "^2.0.4",
     "popmotion": "^6.3.3",
